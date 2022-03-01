@@ -19,29 +19,32 @@ def env():
     env = pettingzoo.wrappers.OrderEnforcingWrapper(env)
     return env
 
+def policy(obs, agent):
+    action = 1
+    return action
 
 
 
 class MinimalSubstrateEnvironment(gym.Env):
-    def __init__(self, num_agents, max_no):
+    def __init__(self, num_agents, max_init_no, max_generations):
         '''
         The init method takes in environment arguments and
          should define the following attributes:
         - possible_agents
         - action_spaces
         - observation_spaces
-
         These attributes should not be changed after initialization.
         '''
+        self.num_agents = num_agents
+        self.max_init_no = max_init_no
+        self.max_generations = max_generations
         self.possible_agents = ["agent_" + str(r) for r in range(num_agents)]
-        #this defines the initial integers for both dimensions for every agent
-        self.agent_name_mapping = dict(zip(self.possible_agents, [[random.randint(0,max_no),random.randint(0,max_no)] for i in range(num_agents)] ))
-
+        
         # Gym spaces are defined and documented here: https://gym.openai.com/docs/#spaces
 
-        # Action space size of 2: increase dimension x or increase dimension y
-        self._action_spaces = {agent: gym.spaces.Discrete(2) for agent in self.possible_agents}
-        # Observation space is both dimensions for every agent
+        # Action space size of 2: increase dimension x by 1, increase dimension y by 1 or do nothing
+        self._action_spaces = {agent: gym.spaces.Discrete(3) for agent in self.possible_agents}
+        # Observation space is both dimensions for every agent (UNSURE; MIGHT BE ALL POSSIBLE VALUES IT CAN GO UP TO? USE BOX?)
         self._observation_spaces = {agent:  gym.spaces.Discrete(2) for agent in self.possible_agents}
 
     def render(self):
@@ -49,57 +52,75 @@ class MinimalSubstrateEnvironment(gym.Env):
 
     def reset(self):
         '''
-        Reset needs to initialize the `agents` attribute and must set up the
-        environment so that render(), and step() can be called without issues.
-
-        Here it initializes the `num_moves` variable which counts the number of
-        hands that are played.
-
         Returns the observations for each agent
         '''
-        self.agents = self.possible_agents[:]
+        self.state = 0
         self.num_gen = 0
-        observations = {agent: None for agent in self.agents}
+        
+        #this defines the initial integers for both dimensions for every agent
+        self.agents = dict(zip(self.possible_agents[:], 
+            [[random.randint(0,self.max_init_no),random.randint(0,self.max_init_no)] for i in range(self.num_agents)] ))
+        observations = self.agents
         return observations
 
     def step(self, actions):
-        '''
-        step(action) takes in an action for each agent and should return the
-        - observations
-        - rewards
-        - dones
-        - infos
-        dicts where each dict looks like {agent_1: item_1, agent_2: item_2}
-        '''
-        # If a user passes in actions with no agents, then just return empty observations, etc.
-        if not actions:
-            self.agents = []
-            return {}, {}, {}, {}
-
-        # rewards for all agents are placed in the rewards dictionary to be returned
-        rewards = {}
-        for agent in self.agents:
-            agent
-
-        rewards[self.agents[0]], rewards[self.agents[1]] = REWARD_MAP[(actions[self.agents[0]], actions[self.agents[1]])]
-
-        self.num_gen += 1
-        env_done = self.num_moves >= NUM_ITERS
-        dones = {agent: env_done for agent in self.agents}
-
-        # current observation is just the other player's most recent action
-        observations = {self.agents[i]: int(actions[self.agents[1 - i]]) for i in range(len(self.agents))}
-
-        # typically there won't be any information in the infos, but there must
-        # still be an entry for each agent
-        infos = {agent: {} for agent in self.agents}
-
-        if env_done:
-            self.agents = []
-
+        
+        self.rewards =  dict(zip(list(self.agents.keys())[:], [0 for i in range(len(self.possible_agents))] ))
+        observations = self.agents
+        
+        self.calculateRewards_eq2()
+        rewards=self.rewards
         return observations, rewards, dones, infos
+    
+    def calculateRewards_eq2(self):
+        latest = 0
+        keys = list(self.agents.keys())
+        max = len(keys)
+        for key in keys:
+            for i in range(latest,max):
+                if keys[i]!=key:
+                    a = self.agents[key]
+                    b = self.agents[keys[i]]
+                    if abs(a[0]-b[0]) > abs(a[1]-b[1]):
+                        dim=0
+                    #IF BOTH DIMENSIONS EQUIDISTANT => DEFAULTS TO DIMENSION Y
+                    else:
+                        dim=1
+                    self.compare(key,keys[i],a,b,dim)
+            latest+=1
 
+    def calculateRewards_eq3(self):
+        latest = 0
+        keys = list(self.agents.keys())
+        max = len(keys)
+        for key in keys:
+            for i in range(latest,max):
+                if keys[i]!=key:
+                    a = self.agents[key]
+                    b = self.agents[keys[i]]
+                    if abs(a[0]-b[0]) < abs(a[1]-b[1]):
+                        dim=0
+                    #IF BOTH DIMENSIONS EQUIDISTANT => DEFAULTS TO DIMENSION Y
+                    else:
+                        dim=1
+                    self.compare(key,keys[i],a,b,dim)
+            latest+=1
 
+    def compare(self,key1,key2,a,b,dimension):
+        if a[dimension]>b[dimension]:
+            self.rewards.update({key1:self.rewards[key1] + 1})
+        elif a[dimension]<b[dimension]:
+            self.rewards.update({key2:self.rewards[key2] + 1})
+        else:
+            self.rewards.update({key1:self.rewards[key1] + 1, key2:self.rewards[key2] + 1})
+
+    def test(self):
+        self.rewards =  dict(zip(list(self.agents.keys())[:], [0 for i in range(len(self.possible_agents))] ))
+        self.calculateRewards_eq2()
+        print(self.agents)
+        print("\n\n\n")
+        print(self.rewards)
+                    
 
 
 class MSAgent(tf_agent.TFAgent):
@@ -107,4 +128,10 @@ class MSAgent(tf_agent.TFAgent):
         self.data=1
         #super(SignAgent, self).__init__(time_step_spec=time_step_spec,action_spec=action_spec,policy=policy,collect_policy=policy,train_sequence_length=None)
 
-a = MinimalSubstrateEnvironment(25, 10)
+a = MinimalSubstrateEnvironment(25, 10, 100)
+a.reset()
+a.test()
+b=0
+for key in list(a.rewards.keys()):
+    b+= a.rewards[key]
+print(b)
