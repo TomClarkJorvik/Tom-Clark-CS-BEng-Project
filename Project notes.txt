@@ -2,3 +2,5 @@
 -non stationarity is a key issue in decentralised MARL
 -implement a proximal policy optimisation (PPO). This is like deep-q learning but only stores a
  small batch of experiences.
+ -there exist a few types of RL; policy gradient, 
+ -continuous state/observation space, but discrete action space is needed.
