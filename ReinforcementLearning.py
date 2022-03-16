@@ -4,7 +4,6 @@
 
 import gym
 import tensorflow as tf
-from tf_agents.agents import tf_agent
 import pettingzoo
 import random
 
@@ -23,8 +22,27 @@ def policy(obs, agent):
     action = 1
     return action
 
-
-
+class agent:
+    def __init__(self, firstDim, secondDim):
+        self.first = firstDim
+        self.second = secondDim
+        self.reward = 0
+    def incrementReward(self):
+        self.reward+=1
+    def resetReward(self):
+        self.reward=0
+    def __getitem__(self, key):
+        if key == 0:
+            return(self.first)
+        else:
+            return(self.second)
+    def takeAction(self, action):
+        if action==0:
+            self.first+=1
+        elif action == 1:
+            self.second+=1
+        #else, no increase to either
+                    
 class MinimalSubstrateEnvironment(gym.Env):
     def __init__(self, num_agents, max_init_no, max_generations):
         '''
@@ -42,7 +60,7 @@ class MinimalSubstrateEnvironment(gym.Env):
         
         # Gym spaces are defined and documented here: https://gym.openai.com/docs/#spaces
 
-        # Action space size of 2: increase dimension x by 1, increase dimension y by 1 or do nothing
+        # Action space size of 3: increase dimension x by 1, increase dimension y by 1 or do nothing
         self._action_spaces = {agent: gym.spaces.Discrete(3) for agent in self.possible_agents}
         # Observation space is both dimensions for every agent (UNSURE; MIGHT BE ALL POSSIBLE VALUES IT CAN GO UP TO? USE BOX?)
         self._observation_spaces = {agent:  gym.spaces.Discrete(2) for agent in self.possible_agents}
@@ -59,7 +77,7 @@ class MinimalSubstrateEnvironment(gym.Env):
         
         #this defines the initial integers for both dimensions for every agent
         self.agents = dict(zip(self.possible_agents[:], 
-            [[random.randint(0,self.max_init_no),random.randint(0,self.max_init_no)] for i in range(self.num_agents)] ))
+            [agent(random.randint(0,self.max_init_no),random.randint(0,self.max_init_no)) for i in range(self.num_agents)] ))
         observations = self.agents
         return observations
 
@@ -67,13 +85,16 @@ class MinimalSubstrateEnvironment(gym.Env):
         
         self.rewards =  dict(zip(list(self.agents.keys())[:], [0 for i in range(len(self.possible_agents))] ))
         observations = self.agents
-        
+        for key in self.agents.keys():
+            self.agents[key].resetReward()
         self.calculateRewards_eq2()
         rewards=self.rewards
-        return observations, rewards, dones, infos
+
+        return observations, rewards #, dones, infos
     
     def calculateRewards_eq2(self):
-        latest = 0
+        #calculates the score for every agent by comparing them against every other agent
+        latest = 1
         keys = list(self.agents.keys())
         max = len(keys)
         for key in keys:
@@ -90,7 +111,7 @@ class MinimalSubstrateEnvironment(gym.Env):
             latest+=1
 
     def calculateRewards_eq3(self):
-        latest = 0
+        latest = 1
         keys = list(self.agents.keys())
         max = len(keys)
         for key in keys:
@@ -109,29 +130,18 @@ class MinimalSubstrateEnvironment(gym.Env):
     def compare(self,key1,key2,a,b,dimension):
         if a[dimension]>b[dimension]:
             self.rewards.update({key1:self.rewards[key1] + 1})
+            a.incrementReward()
         elif a[dimension]<b[dimension]:
             self.rewards.update({key2:self.rewards[key2] + 1})
-        else:
-            self.rewards.update({key1:self.rewards[key1] + 1, key2:self.rewards[key2] + 1})
+            b.incrementReward()
+        #if they are equal, neither is rewarded.
 
     def test(self):
-        self.rewards =  dict(zip(list(self.agents.keys())[:], [0 for i in range(len(self.possible_agents))] ))
-        self.calculateRewards_eq2()
-        print(self.agents)
-        print("\n\n\n")
-        print(self.rewards)
-                    
+        self.reset()
+        self.step([])
+        for key in self.agents.keys():
+            print(self.agents[key].reward)
 
-
-class MSAgent(tf_agent.TFAgent):
-    def __init__(self):
-        self.data=1
-        #super(SignAgent, self).__init__(time_step_spec=time_step_spec,action_spec=action_spec,policy=policy,collect_policy=policy,train_sequence_length=None)
 
 a = MinimalSubstrateEnvironment(25, 10, 100)
-a.reset()
 a.test()
-b=0
-for key in list(a.rewards.keys()):
-    b+= a.rewards[key]
-print(b)
