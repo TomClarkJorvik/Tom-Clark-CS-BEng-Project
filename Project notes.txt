@@ -1,0 +1,4 @@
+-all agents have complete observability; they can see every other agent
+-non stationarity is a key issue in decentralised MARL
+-implement a proximal policy optimisation (PPO). This is like deep-q learning but only stores a
+ small batch of experiences.
