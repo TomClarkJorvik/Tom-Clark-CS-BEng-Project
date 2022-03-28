@@ -22,17 +22,6 @@ def policy(obs, agent):
     action = 1
     return action
 
-class logbook:
-    def __init__(self):
-        self.log = []
-    def addEntry(self,entry):
-        self.log.append(entry)
-    def printLogbook(self):
-        for entry in self.log:
-            print("Generation :",entry[0],"\n")
-            print("Observation :",entry[1],"\n")
-            print("Rewards :",entry[2],"\n")
-
 class agent:
     def __init__(self, firstDim, secondDim):
         self.first = firstDim
@@ -47,10 +36,6 @@ class agent:
             return(self.first)
         else:
             return(self.second)
-    def __str__(self):
-        return(str(self.toList))
-    def toList(self):
-        return([self.first,self.second])
     def takeAction(self, action):
         if action==0:
             self.first+=1
@@ -63,8 +48,6 @@ class agent:
             if self.second!=0:
                 self.second-=1
         #else, no increase to either
-    def decideAction(self):
-        return(random.randint(0,4))
                     
 class MinimalSubstrateEnvironment(gym.Env):
     def __init__(self, num_agents, max_init_no, max_generations):
@@ -96,10 +79,11 @@ class MinimalSubstrateEnvironment(gym.Env):
         Returns the observations for each agent
         '''
         self.state = 0
-        self.current_gen = -1
+        self.num_gen = 0
         
         #this defines the initial integers for both dimensions for every agent
-        self.agents = [agent(random.randint(0,self.max_init_no),random.randint(0,self.max_init_no)) for i in range(self.num_agents)]
+        self.agents = dict(zip(self.possible_agents[:], 
+            [agent(random.randint(0,self.max_init_no),random.randint(0,self.max_init_no)) for i in range(self.num_agents)] ))
         observations = self.agents
         return observations
 
@@ -107,96 +91,73 @@ class MinimalSubstrateEnvironment(gym.Env):
         
         #actions is a num_agents length list. action[i] is applied to agent[i]
         #every agent takes the action assigned to it.
-        
-        self.current_gen+=1
-
         for i in range(len(actions)):
             self.agents[i].takeAction(actions[i])
 
-        self.rewards =  [0 for i in range(len(self.possible_agents))]
-        observations = self.oberserveAgents()
-        for agent in self.agents:
-            agent.resetReward()
+        self.rewards =  dict(zip(list(self.agents.keys())[:], [0 for i in range(len(self.possible_agents))] ))
+        observations = self.agents
+        for key in self.agents.keys():
+            self.agents[key].resetReward()
         self.calculateRewards_eq2()
         rewards=self.rewards
 
-        if self.current_gen == self.max_generations:
-            done = True
-        else:
-            done = False
-
-        #info placeholder
-        info = {}
-
-        return observations, rewards, done, info
+        return observations, rewards #, dones, infos
     
-    def oberserveAgents(self):
-        output = []
-        for agent in self.agents:
-            output.append(agent.toList())
-        return(output)
-
     def calculateRewards_eq2(self):
         #calculates the score for every agent by comparing them against every other agent
         latest = 1
-        max = len(self.agents)
-        for i in range(max):
-            for x in range(latest,max):
-                if i!=x:
-                    a = self.agents[i]
-                    b = self.agents[x]
+        keys = list(self.agents.keys())
+        max = len(keys)
+        for key in keys:
+            for i in range(latest,max):
+                if keys[i]!=key:
+                    a = self.agents[key]
+                    b = self.agents[keys[i]]
                     if abs(a[0]-b[0]) > abs(a[1]-b[1]):
                         dim=0
                     #IF BOTH DIMENSIONS EQUIDISTANT => DEFAULTS TO DIMENSION Y
                     else:
                         dim=1
-                    self.compare(i,x,a,b,dim)
+                    self.compare(key,keys[i],a,b,dim)
             latest+=1
 
     def calculateRewards_eq3(self):
         latest = 1
-        max = len(self.agents)
-        for i in range(max):
-            for x in range(latest,max):
-                if i!=x:
-                    a = self.agents[i]
-                    b = self.agents[x]
+        keys = list(self.agents.keys())
+        max = len(keys)
+        for key in keys:
+            for i in range(latest,max):
+                if keys[i]!=key:
+                    a = self.agents[key]
+                    b = self.agents[keys[i]]
                     if abs(a[0]-b[0]) < abs(a[1]-b[1]):
                         dim=0
                     #IF BOTH DIMENSIONS EQUIDISTANT => DEFAULTS TO DIMENSION Y
                     else:
                         dim=1
-                    self.compare(i,x,a,b,dim)
+                    self.compare(key,keys[i],a,b,dim)
             latest+=1
-        
-    def compare(self,indexA,indexB,a,b,dimension):
+
+    def compare(self,key1,key2,a,b,dimension):
         if a[dimension]>b[dimension]:
-            self.rewards[indexA] = self.rewards[indexA] + 1
+            self.rewards.update({key1:self.rewards[key1] + 1})
             a.incrementReward()
         elif a[dimension]<b[dimension]:
-            self.rewards[indexB] = self.rewards[indexB] + 1
+            self.rewards.update({key2:self.rewards[key2] + 1})
             b.incrementReward()
         #if they are equal, neither is rewarded.
 
-    def decideActions(self):
-        actions = []
-        for agent in self.agents:
-            actions.append(agent.decideAction())
-        return(actions)
+    def test(self):
+        self.reset()
+        self.step([])
+        for key in self.agents.keys():
+            print(self.agents[key].reward)
 
 num_agents = 25
-max_initial_number = 10
-max_generations = 100
-a = MinimalSubstrateEnvironment(num_agents, max_initial_number, max_generations)
-flag = True
-log = logbook()
-while flag:
-    actions = a.decideActions()
-    obs, rewards, done, info = a.step(actions)
-    log.addEntry([a.current_gen,obs,rewards])
-    if done:
-        flag = False
-
-log.printLogbook()
-
-
+a = MinimalSubstrateEnvironment(num_agents, 10, 100)
+actions = []
+for i in range(num_agents):
+    actions.append(random.randint(0,4))
+#a.test()
+print(a.agents[0])
+print(a.step(actions))
