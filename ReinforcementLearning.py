@@ -6,17 +6,9 @@ import gym
 import tensorflow as tf
 import pettingzoo
 import random
+import numpy as np
 
-def env():
-    env = MinimalSubstrateEnvironment()
-    # This wrapper is only for environments which print results to the terminal
-    env = pettingzoo.wrappers.CaptureStdoutWrapper(env)
-    # this wrapper helps error handling for discrete action spaces
-    env = pettingzoo.wrappers.AssertOutOfBoundsWrapper(env)
-    # Provides a wide vareity of helpful user errors
-    # Strongly recommended
-    env = pettingzoo.wrappers.OrderEnforcingWrapper(env)
-    return env
+
 
 def policy(obs, agent):
     action = 1
@@ -30,8 +22,16 @@ class logbook:
     def printLogbook(self):
         for entry in self.log:
             print("Generation :",entry[0],"\n")
-            print("Observation :",entry[1],"\n")
-            print("Rewards :",entry[2],"\n")
+            print("Observation:{} Rewards:{}".format(entry[1],entry[2]))
+    def saveLogbook(self,fileName):
+        f=open(fileName,"w")
+        for entry in self.log:
+            f.write("Generation:{}, Observation:{}, Rewards:{}".format(entry[0],entry[1],entry[2]))
+            f.write("\n")
+        f.close()
+
+   
+
 
 class agent:
     def __init__(self, firstDim, secondDim):
@@ -63,8 +63,7 @@ class agent:
             if self.second!=0:
                 self.second-=1
         #else, no increase to either
-    def decideAction(self):
-        return(random.randint(0,4))
+        
                     
 class MinimalSubstrateEnvironment(gym.Env):
     def __init__(self, num_agents, max_init_no, max_generations):
@@ -80,16 +79,20 @@ class MinimalSubstrateEnvironment(gym.Env):
         self.max_init_no = max_init_no
         self.max_generations = max_generations
         self.possible_agents = ["agent_" + str(r) for r in range(num_agents)]
-        
-        # Gym spaces are defined and documented here: https://gym.openai.com/docs/#spaces
-
+         
         # Action space size of 5: increase/decrease dimension x by 1, increase/decrease dimension y by 1, or do nothing
-        self._action_spaces = {agent: gym.spaces.Discrete(5) for agent in self.possible_agents}
-        # Observation space is both dimensions for every agent (UNSURE; MIGHT BE ALL POSSIBLE VALUES IT CAN GO UP TO? USE BOX?)
-        self._observation_spaces = {agent:  gym.spaces.Discrete(2) for agent in self.possible_agents}
+        #self._action_spaces = {agent: gym.spaces.Discrete(5) for agent in self.possible_agents}
+        self._action_spaces =[gym.spaces.Discrete(5) for agent in self.possible_agents]
+        # Observation space is the number of agents greater than, equal to or less, than in both dimension     
+        #self._observation_spaces = {agent:  gym.spaces.Discrete(2) for agent in self.possible_agents}
+        self._observation_spaces = [gym.spaces.Discrete(6) for agent in self.possible_agents]
         self.reset()
     def render(self):
         pass
+    def getNumberOfStates(self):
+        gym.spaces.Discrete(6)
+        return()
+
 
     def reset(self):
         '''
@@ -100,7 +103,7 @@ class MinimalSubstrateEnvironment(gym.Env):
         
         #this defines the initial integers for both dimensions for every agent
         self.agents = [agent(random.randint(0,self.max_init_no),random.randint(0,self.max_init_no)) for i in range(self.num_agents)]
-        observations = self.agents
+        observations = self.oberserveAgents()
         return observations
 
     def step(self, actions):
@@ -129,11 +132,49 @@ class MinimalSubstrateEnvironment(gym.Env):
         info = {}
 
         return observations, rewards, done, info
-    
-    def oberserveAgents(self):
+    def returnAgents(self):
         output = []
         for agent in self.agents:
             output.append(agent.toList())
+        return(output)
+    
+    def oberserveAgents(self):
+        max = len(self.agents)
+        latest = 1
+        #calculates the observation for each agent
+        # count = [number of other agents greater than itself in dimension x,equal in x,less than in x,
+            #  greater than in dimension y,equal in y,less than in y]
+        # output for agent i = 0 if count[i][0] is the largest, 1 if count[i][1] is the largest etc
+        counter = np.array([[0,0,0,0,0,0] for _ in range(max)])
+        output = []
+        for i in range(max):
+            for x in range(latest,max):
+                if i!=x:
+                    a=self.agents[i]
+                    b=self.agents[x]
+                    #dimension x
+                    if a[0]>b[0]:
+                        counter[i][2]+=1
+                        counter[x][0]+=1
+                    elif a[0]<b[0]:
+                        counter[i][0]+=1
+                        counter[x][2]+=1
+                    else:
+                        counter[i][1]+=1
+                        counter[x][1]+=1
+                    #dimension y
+                    if a[1]>b[1]:
+                        counter[i][5]+=1
+                        counter[x][3]+=1
+                    elif a[1]<b[1]:
+                        counter[i][3]+=1
+                        counter[x][5]+=1
+                    else:
+                        counter[i][4]+=1
+                        counter[x][4]+=1  
+            output.append(np.argmax(counter[i]))
+            latest+=1
+
         return(output)
 
     def calculateRewards_eq2(self):
@@ -178,25 +219,64 @@ class MinimalSubstrateEnvironment(gym.Env):
             b.incrementReward()
         #if they are equal, neither is rewarded.
 
-    def decideActions(self):
-        actions = []
-        for agent in self.agents:
-            actions.append(agent.decideAction())
-        return(actions)
+class qNetwork:
+    def __init__(self, env, hyperparameters):
+        
+        self.env = env
+        self.no_agents = self.env.num_agents
+        #the qNetwork has no_agents many q tables, 1 for each agent. At initialisation every q table is full of 0s
+        self.q_table = [np.zeros([self.env._observation_spaces[i].n, self.env._action_spaces[i].n]) for i in range(self.no_agents)]
+        self.hyperparameters = hyperparameters
+
+    def train(self, maxIter):
+        self.log = logbook()
+        for iter in range(0,maxIter):
+            state = self.env.reset()
+            
+            epochs = 0
+            done = False
+            
+            while not done:
+                actions = []
+                for i in range(self.no_agents):
+                    if random.uniform(0, 1) < epsilon:
+                        actions.append(self.env._action_spaces[i].sample()) # Explore action space
+                    else:
+                        actions.append(np.argmax(self.q_table[i][state][i])) # Exploit learned values
+
+                next_state, rewards, done, info = self.env.step(actions) 
+                for i in range(self.no_agents):
+                    old_value = self.q_table[i][state][i][actions][i]
+                    next_max = np.max(self.q_table[i][next_state][i])
+                
+                    new_value = (1 - alpha) * old_value + alpha * (rewards[i] + gamma * next_max)
+                    self.q_table[i][state][i][actions][i] = new_value
+
+                self.log.addEntry([env.current_gen,env.returnAgents(),rewards])
+                state = next_state
+                epochs += 1
+                if epochs%50==0:
+                    print("Epoch:{}".format(epochs))
+            print("Iteration:{}".format(iter))
+
+
+    
+
+# Hyperparameters
+#learning rate
+alpha = 0.1
+#discount factor
+gamma = 0.6
+#epsilon allows for a greed/reward balance
+epsilon = 0.1
+hyperparameters = [alpha,gamma,epsilon]
+max_iters = 250
 
 num_agents = 25
 max_initial_number = 10
 max_generations = 100
-a = MinimalSubstrateEnvironment(num_agents, max_initial_number, max_generations)
-flag = True
-log = logbook()
-while flag:
-    actions = a.decideActions()
-    obs, rewards, done, info = a.step(actions)
-    log.addEntry([a.current_gen,obs,rewards])
-    if done:
-        flag = False
-
-log.printLogbook()
-
-
+env = MinimalSubstrateEnvironment(num_agents, max_initial_number, max_generations)
+q = qNetwork(env,hyperparameters)
+q.train(max_iters)
+q.log.printLogbook()
+q.log.saveLogbook("log1.txt")
