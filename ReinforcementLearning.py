@@ -246,7 +246,10 @@ class qNetwork:
             while not done:
                 actions = []
                 for i in range(self.no_agents):
-                    if random.uniform(0, 1) < epsilon:
+                    if (random.uniform(0, 1) < epsilon):
+                        actions.append(self.env._action_spaces[i].sample()) # Explore action space
+                    elif all(v == 0 for v in self.q_table[i][state[i]]):
+                        # if the q table's entry for that state is an array of 0's: i.e. no actions tested for that state
                         actions.append(self.env._action_spaces[i].sample()) # Explore action space
                     else:
                         actions.append(np.argmax(self.q_table[i][state[i]])) # Exploit learned values
