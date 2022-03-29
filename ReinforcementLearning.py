@@ -48,7 +48,7 @@ class agent:
         else:
             return(self.second)
     def __str__(self):
-        return(str(self.toList))
+        return(str(self.toList()))
     def toList(self):
         return([self.first,self.second])
     def takeAction(self, action):
@@ -66,7 +66,7 @@ class agent:
         
                     
 class MinimalSubstrateEnvironment(gym.Env):
-    def __init__(self, num_agents, max_init_no, max_generations):
+    def __init__(self, num_agents, max_init_no, max_generations,equation):
         '''
         The init method takes in environment arguments and
          should define the following attributes:
@@ -79,6 +79,7 @@ class MinimalSubstrateEnvironment(gym.Env):
         self.max_init_no = max_init_no
         self.max_generations = max_generations
         self.possible_agents = ["agent_" + str(r) for r in range(num_agents)]
+        self.equation = equation
          
         # Action space size of 5: increase/decrease dimension x by 1, increase/decrease dimension y by 1, or do nothing
         #self._action_spaces = {agent: gym.spaces.Discrete(5) for agent in self.possible_agents}
@@ -117,11 +118,14 @@ class MinimalSubstrateEnvironment(gym.Env):
             self.agents[i].takeAction(actions[i])
 
         self.rewards =  [0 for i in range(len(self.possible_agents))]
-        observations = self.oberserveAgents()
         for agent in self.agents:
             agent.resetReward()
-        self.calculateRewards_eq2()
+        if self.equation == 2:
+            self.calculateRewards_eq2()
+        elif self.equation == 3:
+            self.calculateRewards_eq3()
         rewards=self.rewards
+        observations = self.oberserveAgents()
 
         if self.current_gen == self.max_generations:
             done = True
@@ -225,42 +229,54 @@ class qNetwork:
         self.env = env
         self.no_agents = self.env.num_agents
         #the qNetwork has no_agents many q tables, 1 for each agent. At initialisation every q table is full of 0s
-        self.q_table = [np.zeros([self.env._observation_spaces[i].n, self.env._action_spaces[i].n]) for i in range(self.no_agents)]
+        #init at 0
+        self.q_table = [np.zeros((self.env._observation_spaces[i].n, self.env._action_spaces[i].n)) for i in range(self.no_agents)]
+        
+        
         self.hyperparameters = hyperparameters
 
     def train(self, maxIter):
         self.log = logbook()
+        timesActionsTaken = [0 for i in range(self.env._action_spaces[0].n)]
         for iter in range(0,maxIter):
             state = self.env.reset()
             
             epochs = 0
             done = False
-            
             while not done:
                 actions = []
                 for i in range(self.no_agents):
                     if random.uniform(0, 1) < epsilon:
                         actions.append(self.env._action_spaces[i].sample()) # Explore action space
                     else:
-                        actions.append(np.argmax(self.q_table[i][state][i])) # Exploit learned values
-
-                next_state, rewards, done, info = self.env.step(actions) 
-                for i in range(self.no_agents):
-                    old_value = self.q_table[i][state][i][actions][i]
-                    next_max = np.max(self.q_table[i][next_state][i])
+                        actions.append(np.argmax(self.q_table[i][state[i]])) # Exploit learned values
+                    timesActionsTaken[actions[i]]+=1
                 
-                    new_value = (1 - alpha) * old_value + alpha * (rewards[i] + gamma * next_max)
-                    self.q_table[i][state][i][actions][i] = new_value
-
+                next_state, rewards, done, info = self.env.step(actions)
+                
+                
+                for i in range(self.no_agents):
+                    old_value = self.q_table[i][state[i]][actions[i]]
+                    next_max = np.max(self.q_table[i][next_state[i]])
+                    new_value = old_value + alpha * (rewards[i] + gamma * next_max - old_value)
+                    self.q_table[i][state[i]][actions[i]] = new_value
+                    
+                    
                 self.log.addEntry([env.current_gen,env.returnAgents(),rewards])
                 state = next_state
                 epochs += 1
                 if epochs%50==0:
                     print("Epoch:{}".format(epochs))
+                   
+                    
             print("Iteration:{}".format(iter))
-
-
-    
+            print("Times actions taken",timesActionsTaken)
+    def saveNetwork(self,fileName):
+        f=open(fileName,"w")
+        for line in self.q_table:
+            f.write(str(line))
+            f.write("\n")
+        f.close()
 
 # Hyperparameters
 #learning rate
@@ -268,15 +284,18 @@ alpha = 0.1
 #discount factor
 gamma = 0.6
 #epsilon allows for a greed/reward balance
-epsilon = 0.1
+epsilon = 0.2
 hyperparameters = [alpha,gamma,epsilon]
-max_iters = 250
+max_iters = 15
 
 num_agents = 25
 max_initial_number = 10
 max_generations = 100
-env = MinimalSubstrateEnvironment(num_agents, max_initial_number, max_generations)
+env = MinimalSubstrateEnvironment(num_agents, max_initial_number, max_generations, 3)
 q = qNetwork(env,hyperparameters)
 q.train(max_iters)
-q.log.printLogbook()
+
 q.log.saveLogbook("log1.txt")
+q.saveNetwork("net1.txt")
+
+#there is a natural bias to take the 0th action, irregardless of whether it improves reward or not

@@ -6,15 +6,13 @@
  -continuous state/observation space, but discrete action space is needed.
 
  -implementation decision:
-    -policy/q-tables:   //Use distributed, indiviudal policy networks/q-tables for each individual
-        -one shared policy/q-table//
-        -individual policy/q-tables for each individual//
-        -multiple populations, where individuals in a population sharea policy/q-table//
+    -policy/q-tables:
+        -one shared policy/q-table  NO
+        -individual policy/q-tables with one for each individual DONE
+        -multiple populations, where individuals in a population share a policy/q-table NO
     -state representations for the policy/q-tables:
-        -how many it is stronger/weaker than for first dim, and stronger/weaker for second dim
-        -the reward dictionary
-        -the agent dictionary  
+        -how many it is stronger/weaker than for first dim, and stronger/weaker for second dim DONE
     -agent actions:
-        -agents can decrease their values
-        -agents can change two values at a time
-        -agents can increase/decrease values by any amount
+        -agents can decrease their values   YES
+        -agents can change two values at a time MAYBE
+        -agents can increase/decrease values by any amount NO
