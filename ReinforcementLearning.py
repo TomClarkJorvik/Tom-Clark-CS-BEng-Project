@@ -37,11 +37,7 @@ class agent:
     def __init__(self, firstDim, secondDim):
         self.first = firstDim
         self.second = secondDim
-        self.reward = 0
-    def incrementReward(self):
-        self.reward+=1
-    def resetReward(self):
-        self.reward=0
+
     def __getitem__(self, key):
         if key == 0:
             return(self.first)
@@ -118,8 +114,7 @@ class MinimalSubstrateEnvironment(gym.Env):
             self.agents[i].takeAction(actions[i])
 
         self.rewards =  [0 for i in range(len(self.possible_agents))]
-        for agent in self.agents:
-            agent.resetReward()
+
         if self.equation == 2:
             self.calculateRewards_eq2()
         elif self.equation == 3:
@@ -217,10 +212,10 @@ class MinimalSubstrateEnvironment(gym.Env):
     def compare(self,indexA,indexB,a,b,dimension):
         if a[dimension]>b[dimension]:
             self.rewards[indexA] = self.rewards[indexA] + 1
-            a.incrementReward()
+            
         elif a[dimension]<b[dimension]:
             self.rewards[indexB] = self.rewards[indexB] + 1
-            b.incrementReward()
+            
         #if they are equal, neither is rewarded.
 
 class qNetwork:
