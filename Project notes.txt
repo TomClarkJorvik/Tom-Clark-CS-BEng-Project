@@ -1,18 +1,2 @@
--all agents have complete observability; they can see every other agent
--non stationarity is a key issue in decentralised MARL
--implement a proximal policy optimisation (PPO). This is like deep-q learning but only stores a
- small batch of experiences.
- -there exist a few types of RL; policy gradient, 
- -continuous state/observation space, but discrete action space is needed.
-
- -implementation decision:
-    -policy/q-tables:
-        -one shared policy/q-table  NO
-        -individual policy/q-tables with one for each individual DONE
-        -multiple populations, where individuals in a population share a policy/q-table NO
-    -state representations for the policy/q-tables:
-        -how many it is stronger/weaker than for first dim, and stronger/weaker for second dim DONE
-    -agent actions:
-        -agents can decrease their values   YES
-        -agents can change two values at a time MAYBE
-        -agents can increase/decrease values by any amount NO
+-Why did I do discrete obs space?
+-Visualisation next
