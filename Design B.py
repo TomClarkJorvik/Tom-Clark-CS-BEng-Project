@@ -1,4 +1,4 @@
-#pip install gym
+##pip install gym
 
 import gym
 import random
@@ -25,30 +25,46 @@ class agent:
     def __init__(self, firstDim, secondDim):
         self.first = firstDim
         self.second = secondDim
+        self.zMax = 3
+        self.maxVal = 100
 
     def __getitem__(self, key):
-        #returns the unitation of a dimension
         if key == 0:
-            return(sum(self.first))
+            return(self.first)
         else:
-            return(sum(self.second))
+            return(self.second)
     def __str__(self):
         return(str(self.toList()))
     def toList(self):
-        return([sum(self.first),sum(self.second)])
+        return([self.first,self.second])
     def takeAction(self, action):
-        #flips a random bit at a random index, or does nothing.
-        if action == 0:
-            index = random.randint(0,len(self.first)-1)
-            self.first[index] = 1 - self.first[index]
-        elif action == 1:
-            index = random.randint(0,len(self.second)-1)
-            self.second[index] = 1 - self.second[index]      
-        #else, no change to either
+        
+        z = random.randint(1,self.zMax)
+        if action==0:
+            if self.first+z > self.maxVal:
+                self.first = self.maxVal
+            else:
+                self.first+=z
+        elif action ==1:
+            if self.first-z < 0:
+                self.first = 0
+            else:
+                self.first-=z
+        elif action == 2:
+            if self.second+z > self.maxVal:
+                self.second = self.maxVal
+            else:
+                self.second+=z
+        elif action == 3:
+            if self.second-z < 0:
+                self.second = 0
+            else:
+                self.second-=z
+                
         
                     
 class MinimalSubstrateEnvironment(gym.Env):
-    def __init__(self, num_agents, max_scalar_no, max_generations,equation):
+    def __init__(self, num_agents, max_init_no, max_generations,equation):
         '''
         The init method takes in environment arguments and
          should define the following attributes:
@@ -58,14 +74,14 @@ class MinimalSubstrateEnvironment(gym.Env):
         These attributes should not be changed after initialization.
         '''
         self.num_agents = num_agents
-        self.max_scalar_no = max_scalar_no
+        self.max_init_no = max_init_no
         self.max_generations = max_generations
         self.possible_agents = ["agent_" + str(r) for r in range(num_agents)]
         self.equation = equation
-        
+         
         # Action space size of 5: increase/decrease dimension x by 1, increase/decrease dimension y by 1, or do nothing
         #self._action_spaces = {agent: gym.spaces.Discrete(5) for agent in self.possible_agents}
-        self._action_spaces =[gym.spaces.Discrete(3) for agent in self.possible_agents]
+        self._action_spaces =[gym.spaces.Discrete(4) for agent in self.possible_agents]
         # Observation space is the number of agents greater than, equal to or less, than in both dimension     
         #self._observation_spaces = {agent:  gym.spaces.Discrete(2) for agent in self.possible_agents}
         self._observation_spaces = [gym.spaces.Discrete(6) for agent in self.possible_agents]
@@ -83,9 +99,9 @@ class MinimalSubstrateEnvironment(gym.Env):
         '''
         self.state = 0
         self.current_gen = -1
-        dimLength = 100 
-        #this defines the initial scalar values for both dimensions for every agent
-        self.agents = [agent([random.randint(0,1) for x in range(max_scalar_no)],[random.randint(0,1) for y in range(max_scalar_no)]) for i in range(self.num_agents)]
+        
+        #this defines the initial integers for both dimensions for every agent
+        self.agents = [agent(random.randint(0,self.max_init_no),random.randint(0,self.max_init_no)) for i in range(self.num_agents)]
         observations = self.oberserveAgents()
         return observations
 
@@ -273,13 +289,13 @@ hyperparameters = [alpha,gamma,epsilon]
 max_iters = 15
 
 num_agents = 25
-max_scalar_no = 100
+max_initial_number = 10
 max_generations = 100
-env = MinimalSubstrateEnvironment(num_agents, max_scalar_no, max_generations, 3)
+env = MinimalSubstrateEnvironment(num_agents, max_initial_number, max_generations, 3)
 q = qNetwork(env,hyperparameters)
 q.train(max_iters)
 
-q.log.saveLogbook("log1.txt")
-q.saveNetwork("net1.txt")
+q.log.saveLogbook("logB.txt")
+q.saveNetwork("netB.txt")
 
 #there is a natural bias to take the 0th action, irregardless of whether it improves reward or not
