@@ -1,26 +1,10 @@
 ##pip install gym
+##pip install matplotlib
 
 import gym
 import random
 import numpy as np
-
-
-class logbook:
-    def __init__(self):
-        self.log = []
-    def addEntry(self,entry):
-        self.log.append(entry)
-    def printLogbook(self):
-        for entry in self.log:
-            print("Generation :",entry[0],"\n")
-            print("Observation:{} Rewards:{}".format(entry[1],entry[2]))
-    def saveLogbook(self,fileName):
-        f=open(fileName,"w")
-        for entry in self.log:
-            f.write("Generation:{}, Observation:{}, Rewards:{}".format(entry[0],entry[1],entry[2]))
-            f.write("\n")
-        f.close()
-
+import logBook
 class agent:
     def __init__(self, firstDim, secondDim):
         self.first = firstDim
@@ -80,10 +64,10 @@ class MinimalSubstrateEnvironment(gym.Env):
         self.equation = equation
          
         # Action space size of 5: increase/decrease dimension x by 1, increase/decrease dimension y by 1, or do nothing
-        #self._action_spaces = {agent: gym.spaces.Discrete(5) for agent in self.possible_agents}
+
         self._action_spaces =[gym.spaces.Discrete(4) for agent in self.possible_agents]
         # Observation space is the number of agents greater than, equal to or less, than in both dimension     
-        #self._observation_spaces = {agent:  gym.spaces.Discrete(2) for agent in self.possible_agents}
+        
         self._observation_spaces = [gym.spaces.Discrete(6) for agent in self.possible_agents]
         self.reset()
     def render(self):
@@ -124,7 +108,7 @@ class MinimalSubstrateEnvironment(gym.Env):
         rewards=self.rewards
         observations = self.oberserveAgents()
 
-        if self.current_gen == self.max_generations:
+        if self.current_gen == self.max_generations-1:
             done = True
         else:
             done = False
@@ -233,7 +217,7 @@ class qNetwork:
         self.hyperparameters = hyperparameters
 
     def train(self, maxIter):
-        self.log = logbook()
+        self.log = logBook.logbook()
         timesActionsTaken = [0 for i in range(self.env._action_spaces[0].n)]
         for iter in range(0,maxIter):
             state = self.env.reset()
@@ -243,7 +227,7 @@ class qNetwork:
             while not done:
                 actions = []
                 for i in range(self.no_agents):
-                    if (random.uniform(0, 1) < epsilon):
+                    if (random.uniform(0, 1) < self.hyperparameters[2]):
                         actions.append(self.env._action_spaces[i].sample()) # Explore action space
                     elif all(v == 0 for v in self.q_table[i][state[i]]):
                         # if the q table's entry for that state is an array of 0's: i.e. no actions tested for that state
@@ -258,11 +242,11 @@ class qNetwork:
                 for i in range(self.no_agents):
                     old_value = self.q_table[i][state[i]][actions[i]]
                     next_max = np.max(self.q_table[i][next_state[i]])
-                    new_value = old_value + alpha * (rewards[i] + gamma * next_max - old_value)
+                    new_value = old_value + self.hyperparameters[0] * (rewards[i] + self.hyperparameters[1] * next_max - old_value)
                     self.q_table[i][state[i]][actions[i]] = new_value
                     
                     
-                self.log.addEntry([env.current_gen,env.returnAgents(),rewards])
+                self.log.addEntry([self.env.current_gen,self.env.returnAgents(),rewards])
                 state = next_state
                 epochs += 1
                 if epochs%50==0:
@@ -271,6 +255,7 @@ class qNetwork:
                     
             print("Iteration:{}".format(iter))
             print("Times actions taken",timesActionsTaken)
+
     def saveNetwork(self,fileName):
         f=open(fileName,"w")
         for line in self.q_table:
@@ -278,24 +263,3 @@ class qNetwork:
             f.write("\n")
         f.close()
 
-# Hyperparameters
-#learning rate
-alpha = 0.1
-#discount factor
-gamma = 0.6
-#epsilon allows for a greed/reward balance
-epsilon = 0.2
-hyperparameters = [alpha,gamma,epsilon]
-max_iters = 15
-
-num_agents = 25
-max_initial_number = 10
-max_generations = 100
-env = MinimalSubstrateEnvironment(num_agents, max_initial_number, max_generations, 3)
-q = qNetwork(env,hyperparameters)
-q.train(max_iters)
-
-q.log.saveLogbook("logB.txt")
-q.saveNetwork("netB.txt")
-
-#there is a natural bias to take the 0th action, irregardless of whether it improves reward or not

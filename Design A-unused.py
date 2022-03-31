@@ -3,23 +3,9 @@
 import gym
 import random
 import numpy as np
+import logBook
 
 
-class logbook:
-    def __init__(self):
-        self.log = []
-    def addEntry(self,entry):
-        self.log.append(entry)
-    def printLogbook(self):
-        for entry in self.log:
-            print("Generation :",entry[0],"\n")
-            print("Observation:{} Rewards:{}".format(entry[1],entry[2]))
-    def saveLogbook(self,fileName):
-        f=open(fileName,"w")
-        for entry in self.log:
-            f.write("Generation:{}, Observation:{}, Rewards:{}".format(entry[0],entry[1],entry[2]))
-            f.write("\n")
-        f.close()
 
 class agent:
     def __init__(self, firstDim, secondDim):
@@ -229,7 +215,7 @@ class qNetwork:
         self.hyperparameters = hyperparameters
 
     def train(self, maxIter):
-        self.log = logbook()
+        self.log = logBook.logbook()
         timesActionsTaken = [0 for i in range(self.env._action_spaces[0].n)]
         for iter in range(0,maxIter):
             state = self.env.reset()

@@ -1,2 +1,4 @@
 -Why did I do discrete obs space?
 -Visualisation next
+-Original used 2 populations. Perhaps only 2 qtables are necessary?
+-Design A is useless, remove it
