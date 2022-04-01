@@ -3,7 +3,7 @@
 import gym
 import random
 import numpy as np
-import logBook
+import logBook_B
 
 
 
@@ -215,7 +215,7 @@ class qNetwork:
         self.hyperparameters = hyperparameters
 
     def train(self, maxIter):
-        self.log = logBook.logbook()
+        self.log = logBook_B.logbook()
         timesActionsTaken = [0 for i in range(self.env._action_spaces[0].n)]
         for iter in range(0,maxIter):
             state = self.env.reset()
