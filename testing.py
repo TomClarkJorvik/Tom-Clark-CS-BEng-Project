@@ -5,7 +5,10 @@ import logBook
 
 logger = logBook.logbook()
 logger.loadLogbook("logB.txt")
+#logger.plotRewards()
+#logger.plotInds()
 logger.plotLogbook()
 logger.plotIndividual(0)
+
 
 

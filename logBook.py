@@ -1,7 +1,7 @@
-from idna import InvalidCodepointContext
 import matplotlib.pyplot as plt
 import numpy as np
-
+import random
+#This construct is simply for saving and loading log entries, and displaying graphs
 class logbook:
     def __init__(self):
         self.log = []
@@ -84,46 +84,54 @@ class logbook:
             self.log.append(entry)
         f.close()
     def plotRewards(self):
-        
-        # I want to plot generation vs rewards
-        # and generation vs inds
         rewards = np.array(self.rewards)
         no_individuals = len(rewards[0])
         no_gens = self.no_gens+1
         no_iterations = int(len(rewards)/no_gens)
-
-        fig, ax1 = plt.subplots()
-        ax1.set_xlabel("Generation")
-        ax1.set_ylabel("Rewards")
+        subplotVal = 251
+        axes = []
+        currentAx=0
+        axes.append(plt.subplot(subplotVal+currentAx))
+        axes[currentAx].set_xlabel("Generation")
+        axes[currentAx].set_ylabel("Rewards")
         gensToPlot = [i for i in range(no_gens)]
+        colourMap = self.getColourMap(no_individuals)
 
         for i in range(no_individuals):
             indsRewards=rewards[:,i]
-            self.plotIndividualRewards(indsRewards,no_gens,no_iterations,ax1,gensToPlot,i)
+            self.plotIndividualRewards(indsRewards,no_gens,no_iterations,axes[currentAx],gensToPlot,i,colourMap[i])
+            if i%5==4 and i!=no_individuals-1:
+                currentAx+=1
+                axes.append(plt.subplot(subplotVal+currentAx))
+                axes[currentAx].set_xlabel("Generation")
+                axes[currentAx].set_ylabel("Rewards")
 
         plt.show()
-
     def plotInds(self):
-        
-        # I want to plot generation vs rewards
-        # and generation vs inds
         individuals = np.array(self.inds)
         no_individuals = len(individuals[0])
         no_gens = self.no_gens+1
         no_iterations = int(len(individuals)/no_gens)
-
-        fig, ax1 = plt.subplots()
-        ax1.set_xlabel("Generation")
-        ax1.set_ylabel("Rewards")
+        subplotVal = 251
+        axes = []
+        currentAx=0
+        axes.append(plt.subplot(subplotVal+currentAx))
+        axes[currentAx].set_xlabel("Generation")
+        axes[currentAx].set_ylabel("Scalar Value")
         gensToPlot = [i for i in range(no_gens)]
-
+        colourMap = self.getColourMap(no_individuals)
+        print(colourMap)
         for i in range(no_individuals):
             indsDims=individuals[:,i]
-            self.plotIndividualDimensions(indsDims,no_gens,no_iterations,ax1,gensToPlot,i)
-
+            self.plotIndividualDimensions(indsDims,no_gens,no_iterations,axes[currentAx],gensToPlot,i,colourMap[i])
+            if i%5==4 and i!=no_individuals-1:
+                currentAx+=1
+                axes.append(plt.subplot(subplotVal+currentAx))
+                axes[currentAx].set_xlabel("Generation")
+                axes[currentAx].set_ylabel("Scalar Value")
         plt.show()
 
-    def plotIndividualRewards(self,indsRewards,no_gens,no_iterations,ax1,gensToPlot,individual):
+    def plotIndividualRewards(self,indsRewards,no_gens,no_iterations,ax1,gensToPlot,individual,colour):
         totIndsRewards=[0 for z in range(no_gens)]
 
         for x in range(no_gens*no_iterations):
@@ -132,9 +140,9 @@ class logbook:
         for z in range(no_gens):
             totIndsRewards[z] = totIndsRewards[z]/no_iterations
         label = "Rewards:Ind {}".format(individual)
-        ax1.plot(gensToPlot, totIndsRewards, label=label)
+        ax1.plot(gensToPlot, totIndsRewards, label=label,color=colour)
     
-    def plotIndividualDimensions(self,inds,no_gens,no_iterations,ax1,gensToPlot,individual):
+    def plotIndividualDimensions(self,inds,no_gens,no_iterations,ax1,gensToPlot,individual,colour):
         totInds=[[0,0] for z in range(no_gens)]
             
         for x in range(no_gens*no_iterations):
@@ -146,7 +154,8 @@ class logbook:
             for y in range(0,2):
                 totInds[z][y] = totInds[z][y]/no_iterations
         label = "Dimensions:Ind {}".format(individual)
-        ax1.plot(gensToPlot, totInds, label = label)
+        ax1.plot(gensToPlot, totInds, label = label,color=colour)
+
     def plotIndividual(self,individual):
         individuals = np.array(self.inds)
         rewards = np.array(self.rewards)
@@ -155,17 +164,64 @@ class logbook:
 
         fig, ax1 = plt.subplots()
         ax1.set_xlabel("Generation")
-        ax1.set_ylabel("Rewards")
+        ax1.set_ylabel("Rewards/Scalar Value")
         gensToPlot = [i for i in range(no_gens)]
-        
+        colourMap = self.getColourMap(10)
         indsDims=individuals[:,individual]
         indsRewards=rewards[:,individual]
-        self.plotIndividualRewards(indsRewards,no_gens,no_iterations,ax1,gensToPlot,individual)
-        self.plotIndividualDimensions(indsDims,no_gens,no_iterations,ax1,gensToPlot,individual)
+        self.plotIndividualRewards(indsRewards,no_gens,no_iterations,ax1,gensToPlot,individual,colourMap[0])
+        self.plotIndividualDimensions(indsDims,no_gens,no_iterations,ax1,gensToPlot,individual,colourMap[9])
+        leg = plt.legend(loc="upper left")
         plt.show()
 
 
     def plotLogbook(self):
-        self.plotInds()
-        self.plotRewards()
+        rewards = np.array(self.rewards)
+        no_individuals = len(rewards[0])
+        no_gens = self.no_gens+1
+        no_iterations = int(len(rewards)/no_gens)
+        colourMap = self.getColourMap(no_individuals)
         
+        #Rewards
+        fig, axes = plt.subplots(2, 5, constrained_layout=True)
+        currentAxRow=0
+        currentAxCol=0
+        axes[currentAxCol][currentAxRow].set_xlabel("Generation")
+        axes[currentAxCol][currentAxRow].set_ylabel("Rewards")
+        gensToPlot = [i for i in range(no_gens)]
+
+        for i in range(no_individuals):
+            indsRewards=rewards[:,i]
+            self.plotIndividualRewards(indsRewards,no_gens,no_iterations,axes[currentAxCol][currentAxRow],gensToPlot,i,colourMap[i])
+
+            if i%5==4 and i!=no_individuals-1:
+                currentAxRow+=1
+                axes[currentAxCol][currentAxRow].set_xlabel("Generation")
+                axes[currentAxCol][currentAxRow].set_ylabel("Rewards")
+
+        #Dimensions
+        individuals = np.array(self.inds)
+        currentAxRow=0
+        currentAxCol+=1
+
+        axes[currentAxCol][currentAxRow].set_xlabel("Generation")
+        axes[currentAxCol][currentAxRow].set_ylabel("Scalar Value")
+
+        for i in range(no_individuals):
+            indsDims=individuals[:,i]
+            self.plotIndividualDimensions(indsDims,no_gens,no_iterations,axes[currentAxCol][currentAxRow],gensToPlot,i,colourMap[i])
+            if i%5==4 and i!=no_individuals-1:
+                currentAxRow+=1               
+                axes[currentAxCol][currentAxRow].set_xlabel("Generation")
+                axes[currentAxCol][currentAxRow].set_ylabel("Scalar Value")
+
+        plt.show()
+
+    def getColourMap(self, n):
+        name='hsv'
+        cmap=plt.cm.get_cmap(name, n)
+        colourArray = []
+        for i in range(n):
+            colourArray.append(cmap(i))
+        random.shuffle(colourArray)
+        return(colourArray)
