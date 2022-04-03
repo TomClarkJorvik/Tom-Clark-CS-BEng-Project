@@ -16,12 +16,9 @@ class logbook(logBook_B.logbook):
         self.directory = "./logs/"
 
     def addAverageRewards(self, mainArray, toAddArray,no_gens,no_iterations):
-        totIndsRewards=[0 for z in range(no_gens)]
         for x in range(no_gens*no_iterations):
             index=x%no_gens
-            totIndsRewards[index]+=toAddArray[x]
-        for i in range(no_gens):
-            mainArray[i] += totIndsRewards[i]/no_iterations
+            mainArray[index]+=toAddArray[x]/no_iterations
         return(mainArray)
 
     def calcAverageRewards(self,rewards,no_gens,no_iterations,no_individuals):
@@ -40,15 +37,12 @@ class logbook(logBook_B.logbook):
         return(popAverageReward)
 
     def addAverageScalars(self, mainArray, toAddArray,no_gens,no_iterations,no_dims):
-        totInds=[[0,0] for z in range(no_gens)]
-            
+        
         for x in range(no_gens*no_iterations):
             index=x%no_gens
             for y in range(0,no_dims):
-                totInds[index][y]+=toAddArray[x][y]
-        for z in range(no_gens):
-            for y in range(0,no_dims):
-                mainArray[z][y] += totInds[z][y]/no_iterations
+                mainArray[index][y]+=toAddArray[x][y]/no_iterations
+                
         return(mainArray)
     
     def calcAverageScalars(self,individuals,no_gens,no_iterations,no_individuals,no_dims):
@@ -63,46 +57,9 @@ class logbook(logBook_B.logbook):
         
         for i in range(no_gens):
             for y in range(0,no_dims):
-                popAverageScalars[0][i][y] = popAverageScalars[0][i][y]/(no_iterations)
-                popAverageScalars[1][i][y] = popAverageScalars[1][i][y]/(no_iterations)
+                popAverageScalars[0][i][y] = popAverageScalars[0][i][y]/(no_iterations/2)
+                popAverageScalars[1][i][y] = popAverageScalars[1][i][y]/(no_iterations/2)
         return(popAverageScalars)
-
-
-    def plotRewards(self):
-        rewards = np.array(self.rewards)
-        no_individuals = len(rewards[0])
-        no_gens = self.no_gens+1
-        no_iterations = int(len(rewards)/no_gens)
-        gensToPlot = [i for i in range(no_gens)]
-        colourMap = self.getColourMap()
-        popAverageReward = self.calcAverageRewards(rewards,no_gens,no_iterations,no_individuals)
-        fig, axes = plt.subplots(2, 1, constrained_layout=True)
-        
-        for i in range(2):
-            axes[i].set_xlabel("Generation")
-            axes[i].set_ylabel("Rewards")
-            #axes[i].set_ylim([0, 1])
-            axes[i].plot(gensToPlot, popAverageReward[i], color=colourMap[i*4])
-
-        plt.show()
-
-    def plotInds(self):
-        individuals = np.array(self.inds)
-        no_individuals = len(individuals[0])
-        no_gens = self.no_gens+1
-        no_iterations = int(len(individuals)/no_gens)
-        no_dims = len(individuals[0][0])
-        gensToPlot = [i for i in range(no_gens)]
-        colourMap = self.getColourMap()
-        popAverageScalars = self.calcAverageScalars(individuals,no_gens,no_iterations,no_individuals,no_dims)
-        
-        fig, axes = plt.subplots(1, 1, constrained_layout=True)
-        axes.set_xlabel("Generation")
-        axes.set_ylabel("Scalars")
-        for i in range(no_dims):
-            axes.plot(gensToPlot, popAverageScalars[i], color=colourMap[i*4])
-
-        plt.show()
 
     def plotLogbook(self):
         rewards = np.array(self.rewards)

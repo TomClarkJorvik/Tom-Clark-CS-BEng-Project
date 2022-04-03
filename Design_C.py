@@ -46,10 +46,7 @@ class MinimalSubstrateEnvironment(Design_B.MinimalSubstrateEnvironment):
         self.current_gen+=1
 
         for i in range(self.num_agents):
-            if i<self.popCutoff:
-               self.agents[i].takeAction(actions[0])
-            else:
-                self.agents[i].takeAction(actions[1])
+            self.agents[i].takeAction(actions[i])
 
         self.rewards =  [0 for i in range(self.num_agents)]
 
@@ -81,7 +78,6 @@ class qNetwork(Design_B.qNetwork):
         #this qNetwork has 2 q tables, 1 for each population. At initialisation both q tables are full of 0s
         #init at 0
         self.q_table = [np.zeros((self.env._observation_spaces[i].n, self.env._action_spaces[i].n)) for i in range(2)]
-        
         self.hyperparameters = hyperparameters
 
     def train(self, maxIter):
@@ -107,7 +103,7 @@ class qNetwork(Design_B.qNetwork):
                     else:
                         actions.append(np.argmax(self.q_table[popNo][state[i]])) # Exploit learned values
                     timesActionsTaken[actions[i]]+=1
-                
+                    
                 next_state, rewards, done, info = self.env.step(actions)
                 
                 
