@@ -51,10 +51,10 @@ class MinimalSubstrateEnvironment(Design_B.MinimalSubstrateEnvironment):
             else:
                 self.agents[i].takeAction(actions[1])
 
-        self.rewards =  [0 for i in range(len(self.possible_agents))]
+        self.rewards =  [0 for i in range(self.num_agents)]
 
         if self.equation == 1:
-            self.calculateRewards_eq2()
+            self.calculateRewards_eq1()
         elif self.equation == 2:
             self.calculateRewards_eq2()
         elif self.equation == 3:

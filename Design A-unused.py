@@ -45,16 +45,9 @@ class agent:
         #else, no change to either
         
                     
-class MinimalSubstrateEnvironment(gym.Env):
+class MinimalSubstrateEnvironment():
     def __init__(self, num_agents, max_scalar_no, max_generations,equation):
-        '''
-        The init method takes in environment arguments and
-         should define the following attributes:
-        - possible_agents
-        - action_spaces
-        - observation_spaces
-        These attributes should not be changed after initialization.
-        '''
+        
         self.num_agents = num_agents
         self.max_scalar_no = max_scalar_no
         self.max_generations = max_generations

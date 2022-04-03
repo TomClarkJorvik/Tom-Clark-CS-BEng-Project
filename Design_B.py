@@ -74,7 +74,7 @@ class agent_single_dimension:
                 
         
                     
-class MinimalSubstrateEnvironment(gym.Env):
+class MinimalSubstrateEnvironment:
     def __init__(self, num_agents, max_init_no, max_generations,equation):
         
         self.num_agents = num_agents
@@ -83,22 +83,22 @@ class MinimalSubstrateEnvironment(gym.Env):
         self.possible_agents = ["agent_" + str(r) for r in range(num_agents)]
         self.equation = equation
          
-        if equation ==1:
+        if self.equation ==1:
             # Action space size of 2: increase/decrease dimension by 1
 
-            self._action_spaces =[gym.spaces.Discrete(2) for i in range(2)]
+            self._action_spaces = [gym.spaces.Discrete(2) for i in range(self.num_agents)]
             # Observation space is the number of agents greater than, equal to or less than itself 
             
-            self._observation_spaces = [gym.spaces.Discrete(3) for i in range(2)]
+            self._observation_spaces = [gym.spaces.Discrete(3) for i in range(self.num_agents)]
 
         else:
 
             # Action space size of 4: increase/decrease dimension x by 1, increase/decrease dimension y by 1
 
-            self._action_spaces =[gym.spaces.Discrete(4) for i in range(2)]
+            self._action_spaces =[gym.spaces.Discrete(4) for i in range(self.num_agents)]
             # Observation space is the number of agents greater than, equal to or less, than in both dimension     
             
-            self._observation_spaces = [gym.spaces.Discrete(6) for i in range(2)]
+            self._observation_spaces = [gym.spaces.Discrete(6) for i in range(self.num_agents)]
 
         self.reset()
     def render(self):
@@ -126,12 +126,12 @@ class MinimalSubstrateEnvironment(gym.Env):
         
         self.current_gen+=1
 
-        for i in range(len(actions)):
+        for i in range(self.num_agents):
             self.agents[i].takeAction(actions[i])
 
-        self.rewards =  [0 for i in range(len(self.possible_agents))]
+        self.rewards =  [0 for i in range(self.num_agents)]
         if self.equation == 1:
-            self.calculateRewards_eq2()
+            self.calculateRewards_eq1()
         elif self.equation == 2:
             self.calculateRewards_eq2()
         elif self.equation == 3:
@@ -223,14 +223,13 @@ class MinimalSubstrateEnvironment(gym.Env):
                 if i!=x:
                     a = self.agents[i]
                     b = self.agents[x]
-                    if abs(a[0]-b[0]) > abs(a[1]-b[1]):
-                        dim=0
-                    #IF BOTH DIMENSIONS EQUIDISTANT => DEFAULTS TO DIMENSION Y
-                    else:
-                        dim=1
-                    self.compare(i,x,a,b,dim)
+                    if a.getValue()>b.getValue():
+                        self.rewards[i] = self.rewards[i] + 1
+                        
+                    elif a.getValue()<b.getValue():
+                        self.rewards[x] = self.rewards[x] + 1
             latest+=1
-
+            
     def calculateRewards_eq2(self):
         #calculates the score for every agent by comparing them against every other agent
         latest = 1
@@ -240,11 +239,12 @@ class MinimalSubstrateEnvironment(gym.Env):
                 if i!=x:
                     a = self.agents[i]
                     b = self.agents[x]
-                    if a.getValue()>b.getValue():
-                        self.rewards[i] = self.rewards[i] + 1
-                        
-                    elif a.getValue()<b.getValue():
-                        self.rewards[x] = self.rewards[x] + 1
+                    if abs(a[0]-b[0]) > abs(a[1]-b[1]):
+                        dim=0
+                    #IF BOTH DIMENSIONS EQUIDISTANT => DEFAULTS TO DIMENSION Y
+                    else:
+                        dim=1
+                    self.compare(i,x,a,b,dim)
             latest+=1
 
     def calculateRewards_eq3(self):
