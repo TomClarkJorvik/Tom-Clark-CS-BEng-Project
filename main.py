@@ -14,7 +14,7 @@ max_initial_number = 10
 max_generations = 100
 equation = 1
 num_agents_B = 25
-env_B = Design_B.MinimalSubstrateEnvironment(num_agents_B, max_initial_number, max_generations, equation)
+env_B = Design_B.MinimalSubstrateEnvironment(50, max_initial_number, max_generations, equation)
 q_B = Design_B.qNetwork(env_B,hyperparameters)
 q_B.train(max_iters)
 
