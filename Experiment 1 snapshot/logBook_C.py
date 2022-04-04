@@ -77,7 +77,7 @@ class logbook(logBook_B.logbook):
         popAverageReward = self.calcAverageRewards(rewards,no_gens,no_iterations,no_individuals)
         popAverageScalars = self.calcAverageScalars(individuals,no_gens,no_iterations,no_individuals,no_dims)
         
-        
+        print(popAverageScalars)
         #Plotting
         for i in range(2):
             axes[0].set_xlabel("Generation")

@@ -1,3 +1,4 @@
+from socket import inet_aton
 from xml.dom import IndexSizeErr
 import matplotlib.pyplot as plt
 import numpy as np
@@ -14,43 +15,44 @@ class logbook:
         self.no_gens = 0
         self.directory = "./logs/"
     def addEntry(self,entry):
+        
         self.log.append(entry)
         self.gens.append(entry[0])
         if entry[0]>self.no_gens:
             self.no_gens=entry[0]
         self.inds.append(entry[1])
         self.rewards.append(entry[2])
+        self.no_dims = len(entry[1][0])
+
     def printLogbook(self):
         for entry in self.log:
             print("Generation :",entry[0],"\n")
             print("Observation:{} Rewards:{}".format(entry[1],entry[2]))
+            
     def saveLogbook(self,fileName):
         file_path = os.path.join(self.directory, fileName)
         f=open(file_path,"w")
         f.write(str(self.equation)+"\n")
-        if self.equation == 1:
-            for entry in self.log:
-                toEnter=""
-                toEnter+=str(entry[0])+";"
+        f.write(str(self.no_dims)+"\n")
+        for entry in self.log:
+            toEnter=""
+            toEnter+=str(entry[0])+";"
+            if self.no_dims == 1:
                 for item in entry[1]:
                     toEnter+="["+str(item[0])+"]"
-                toEnter+=";"
-                for item in entry[2]:
-                    toEnter+=str(item)+","
-                toEnter+=";\n"
-                f.write(toEnter)
-        else:
-            for entry in self.log:
-                toEnter=""
-                toEnter+=str(entry[0])+";"
+            else:
+                
                 for item in entry[1]:
-                    toEnter+="["+str(item[0])+","+str(item[1])+"]"
-                toEnter+=";"
-                for item in entry[2]:
-                    toEnter+=str(item)+","
-                toEnter+=";\n"
-                f.write(toEnter)
-
+                    toEnter+="["
+                    for dim in range(self.no_dims):
+                        toEnter+=str(item[dim])+","
+                    toEnter = toEnter[:-1]
+                    toEnter+="]"
+            toEnter+=";"
+            for item in entry[2]:
+                toEnter+=str(item)+","
+            toEnter+=";\n"
+            f.write(toEnter)
         f.close()
     def loadLogbook(self,fileName):
         file_path = os.path.join(self.directory, fileName)
@@ -58,7 +60,8 @@ class logbook:
         self.log = []
         lines = f.readlines()
         self.equation = int(lines[0].rstrip('\n'))
-        for i in range(1,len(lines)):
+        self.no_dims = int(lines[1].rstrip('\n'))
+        for i in range(2,len(lines)):
             line = lines[i]
             entry = []
             start = 0
@@ -75,7 +78,7 @@ class logbook:
                 count+=1
             flag=True
             inds=[]
-            if self.equation == 1:
+            if self.no_dims == 1:
                 while flag:
                     if line[count] == "[":
                         indxStart=count+1
@@ -90,13 +93,15 @@ class logbook:
             else:
                 while flag:
                     if line[count] == "[":
-                        indxStart=count+1
+                        dims = []
+                        indStart=count+1
                     elif line[count]==",":
-                        indxEnd=count
+                        dims.append(int(line[indStart:count]))
+                        indStart = count+1
+                        
                     elif line[count]=="]":
-                        indx=line[indxStart:indxEnd]
-                        indy=line[indxEnd+1:count]
-                        inds.append([int(indx),int(indy)])
+                        dims.append(int(line[indStart:count]))
+                        inds.append(dims)
                     elif line[count]==";":
                         flag=False
                         entry.append(inds)
@@ -178,19 +183,14 @@ class logbook:
     
     def plotIndividualDimensions(self,inds,no_gens,no_iterations,ax1,gensToPlot,individual,colour):
         
-        if self.equation==1:
-            no_dims = 1
-            totInds=[[0] for z in range(no_gens)]
-        else:
-            no_dims = 2
-            totInds=[[0,0] for z in range(no_gens)]
+        totInds=[[0 for i in range(self.no_dims)] for z in range(no_gens)]
         for x in range(no_gens*no_iterations):
             index=x%no_gens
-            for y in range(0,no_dims):
+            for y in range(0,self.no_dims):
                 totInds[index][y]+=inds[x][y]
                 
         for z in range(no_gens):
-            for y in range(0,no_dims):
+            for y in range(0,self.no_dims):
                 totInds[z][y] = totInds[z][y]/no_iterations
         label = "Dimensions:Ind {}".format(individual)
         ax1.plot(gensToPlot, totInds, label = label,color=colour)
@@ -338,17 +338,13 @@ class logbook:
         ax1.plot(gensToPlot, totIndsRewards, label=label,color=colour)
     
     def plotIndividualDimensions_one_iteration(self,inds,no_gens,no_iterations,ax1,gensToPlot,individual,colour,iteration_to_plot):
-        if self.equation==1:
-            no_dims = 1
-            totInds=[[0] for z in range(no_gens)]
-        else:
-            no_dims = 2
-            totInds=[[0,0] for z in range(no_gens)]
+        
+        totInds=[[0 for i in range(self.no_dims)] for z in range(no_gens)]
         for x in range(no_gens*no_iterations):
             
             if x>= iteration_to_plot*no_gens and x<=(iteration_to_plot*no_gens+99):
                 index=x%no_gens
-                for y in range(0,no_dims):
+                for y in range(0,self.no_dims):
                     totInds[index][y]+=inds[x][y]
         label = "Dimensions:Ind {}".format(individual)
         ax1.plot(gensToPlot, totInds, label = label,color=colour)
@@ -393,14 +389,77 @@ class logbook:
                 axes[currentAxRow][currentAxCol].set_ylabel("Scalar Value")
 
         plt.show()
+
+    def plotIndividualObjFitness(self,inds,no_gens,no_iterations,ax1,gensToPlot,individual,colour):
         
+        totInds=[0 for z in range(no_gens)]
+        
+        for x in range(no_gens*no_iterations):
+            index=x%no_gens
+            for y in range(0,self.no_dims):
+                totInds[index]+=inds[x][y]
+        for i in range(no_gens):
+            totInds[i] = totInds[i]/no_iterations
+            
+        label = "Dimensions:Ind {}".format(individual)
+        ax1.plot(gensToPlot, totInds, label = label,color=colour)
+
+    def plot_obj_fitness_and_rewards(self):
+        rewards = np.array(self.rewards)
+        no_individuals = len(rewards[0])
+        no_gens = self.no_gens+1
+        no_iterations = int(len(rewards)/no_gens)
+        colourMap = self.getColourMap(no_individuals)
+        
+        #Rewards
+        fig, axes = plt.subplots(2, 5, constrained_layout=True)
+        currentAxRow=0
+        currentAxCol=0
+        axes[currentAxRow][currentAxCol].set_xlabel("Generation")
+        axes[currentAxRow][currentAxCol].set_ylabel("Rewards")
+        gensToPlot = [i for i in range(no_gens)]
+        for i in range(no_individuals):
+            indsRewards=rewards[:,i]
+            self.plotIndividualRewards(indsRewards,no_gens,no_iterations,axes[currentAxRow][currentAxCol],gensToPlot,i,colourMap[i])
+
+            if i%5==4 and i!=no_individuals-1:
+                currentAxCol+=1
+                axes[currentAxRow][currentAxCol].set_xlabel("Generation")
+                axes[currentAxRow][currentAxCol].set_ylabel("Rewards")
+
+        #Dimensions
+        individuals = np.array(self.inds)
+        currentAxCol=0
+        currentAxRow+=1
+
+        axes[currentAxRow][currentAxCol].set_xlabel("Generation")
+        axes[currentAxRow][currentAxCol].set_ylabel("Objective Fitness")
+
+        for i in range(no_individuals):
+            indsDims=individuals[:,i]
+            
+            self.plotIndividualObjFitness(indsDims,no_gens,no_iterations,axes[currentAxRow][currentAxCol],gensToPlot,i,colourMap[i])
+            if i%5==4 and i!=no_individuals-1:
+                currentAxCol+=1               
+                axes[currentAxRow][currentAxCol].set_xlabel("Generation")
+                axes[currentAxRow][currentAxCol].set_ylabel("Objective Fitness")
+
+        plt.show()
+    
+
     def getColourMap(self, n):
+        n=25 # only works for 25 indiviudals at the moment
         name='hsv'
         cmap=plt.cm.get_cmap(name, n)
         colourArray = []
+        tempArray = [[] for i in range(5)]
+        
+
         for i in range(n):
-            colourArray.append(cmap(i))
-        random.shuffle(colourArray)
+            tempArray[i%5].append(cmap(i))
+        for col in tempArray:
+            for colour in col:
+                colourArray.append(colour)
         return(colourArray)
     def getColourMap_2_inds(self):
         name='hsv'
@@ -409,3 +468,4 @@ class logbook:
         for i in range(10):
             colourArray.append(cmap(i))
         return(colourArray)
+
