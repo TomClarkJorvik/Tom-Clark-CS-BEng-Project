@@ -7,9 +7,10 @@ import logBook_C
 equation = 1
 
 
-logger = logBook_C.logbook(equation,25)
-logger.loadLogbook("logC1.txt")
+logger = logBook_B.logbook(equation)
+logger.loadLogbook("logB1_2inds.txt")
 logger.plotLogbook()
+
 
 
 

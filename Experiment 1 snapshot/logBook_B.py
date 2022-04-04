@@ -184,12 +184,11 @@ class logbook:
         else:
             no_dims = 2
             totInds=[[0,0] for z in range(no_gens)]
-
+            
         for x in range(no_gens*no_iterations):
             index=x%no_gens
             for y in range(0,no_dims):
                 totInds[index][y]+=inds[x][y]
-                
         for z in range(no_gens):
             for y in range(0,no_dims):
                 totInds[z][y] = totInds[z][y]/no_iterations
@@ -229,6 +228,7 @@ class logbook:
         axes[currentAxRow][currentAxCol].set_xlabel("Generation")
         axes[currentAxRow][currentAxCol].set_ylabel("Rewards")
         gensToPlot = [i for i in range(no_gens)]
+
         for i in range(no_individuals):
             indsRewards=rewards[:,i]
             self.plotIndividualRewards(indsRewards,no_gens,no_iterations,axes[currentAxRow][currentAxCol],gensToPlot,i,colourMap[i])
@@ -265,33 +265,37 @@ class logbook:
         colourMap = self.getColourMap(10)
         
         #Rewards
-        fig, axes = plt.subplots(2, 1, constrained_layout=True)
+        fig, axes = plt.subplots(2, 5, constrained_layout=True)
         currentAxRow=0
-        axes[currentAxRow].set_xlabel("Generation")
-        axes[currentAxRow].set_ylabel("Rewards")
+        currentAxCol=0
+        axes[currentAxRow][currentAxCol].set_xlabel("Generation")
+        axes[currentAxRow][currentAxCol].set_ylabel("Rewards")
         gensToPlot = [i for i in range(no_gens)]
+
         for i in range(no_individuals):
             indsRewards=rewards[:,i]
-            self.plotIndividualRewards(indsRewards,no_gens,no_iterations,axes[currentAxRow],gensToPlot,i,colourMap[i*4])
+            self.plotIndividualRewards(indsRewards,no_gens,no_iterations,axes[currentAxRow][currentAxCol],gensToPlot,i,colourMap[i*4])
 
             if i%5==4 and i!=no_individuals-1:
-                axes[currentAxRow].set_xlabel("Generation")
-                axes[currentAxRow].set_ylabel("Rewards")
+                currentAxCol+=1
+                axes[currentAxRow][currentAxCol].set_xlabel("Generation")
+                axes[currentAxRow][currentAxCol].set_ylabel("Rewards")
 
         #Dimensions
         individuals = np.array(self.inds)
+        currentAxCol=0
         currentAxRow+=1
 
-        axes[currentAxRow].set_xlabel("Generation")
-        axes[currentAxRow].set_ylabel("Scalar Value")
-        print(individuals[0])
-        print(individuals[4999])
+        axes[currentAxRow][currentAxCol].set_xlabel("Generation")
+        axes[currentAxRow][currentAxCol].set_ylabel("Scalar Value")
+
         for i in range(no_individuals):
             indsDims=individuals[:,i]
-            self.plotIndividualDimensions(indsDims,no_gens,no_iterations,axes[currentAxRow],gensToPlot,i,colourMap[i*4])
-            if i%5==4 and i!=no_individuals-1:          
-                axes[currentAxRow].set_xlabel("Generation")
-                axes[currentAxRow].set_ylabel("Scalar Value")
+            self.plotIndividualDimensions(indsDims,no_gens,no_iterations,axes[currentAxRow][currentAxCol],gensToPlot,i,colourMap[i*4])
+            if i%5==4 and i!=no_individuals-1:
+                currentAxCol+=1               
+                axes[currentAxRow][currentAxCol].set_xlabel("Generation")
+                axes[currentAxRow][currentAxCol].set_ylabel("Scalar Value")
 
         plt.show()
         
@@ -303,8 +307,3 @@ class logbook:
             colourArray.append(cmap(i))
         random.shuffle(colourArray)
         return(colourArray)
-
-
-logger = logbook(1)
-logger.loadLogbook("logB1_2inds.txt")
-logger.plotLogbook_only2inds()
