@@ -409,8 +409,3 @@ class logbook:
         for i in range(10):
             colourArray.append(cmap(i))
         return(colourArray)
-
-
-logger = logbook(1)
-logger.loadLogbook("logB1.txt")
-logger.plot_one_iteration(49)
