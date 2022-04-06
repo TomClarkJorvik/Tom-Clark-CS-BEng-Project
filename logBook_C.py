@@ -14,6 +14,8 @@ class logbook(logBook_B.logbook):
         self.no_gens = 0
         self.popCutoff = popCutoff
         self.directory = "./logs/"
+        self.rewardLabel = "Subjective Fit."
+        self.scalarLabel = "Objective Fit."
 
     def addAverageRewards(self, mainArray, toAddArray,no_gens,no_iterations):
         for x in range(no_gens*no_iterations):
@@ -77,15 +79,14 @@ class logbook(logBook_B.logbook):
         popAverageReward = self.calcAverageRewards(rewards,no_gens,no_iterations,no_individuals)
         popAverageScalars = self.calcAverageScalars(individuals,no_gens,no_iterations,no_individuals,no_dims)
         
-        print(popAverageScalars)
         #Plotting
         for i in range(2):
             axes[0].set_xlabel("Generation")
-            axes[0].set_ylabel("Average Rewards")
+            axes[0].set_ylabel(self.rewardLabel)
             axes[0].plot(gensToPlot, popAverageReward[i], color=colourMap[i*4])
         for i in range(2):
             axes[1].set_xlabel("Generation")
-            axes[1].set_ylabel("Average Scalar Value")
+            axes[1].set_ylabel(self.scalarLabel)
             axes[1].plot(gensToPlot, popAverageScalars[i], color=colourMap[i*4])
 
 
