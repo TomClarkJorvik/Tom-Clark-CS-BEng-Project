@@ -442,6 +442,152 @@ class logbook:
 
         plt.show()
     
+    def plotIndividualObjective_one_iteration(self,inds,no_gens,no_iterations,ax1,gensToPlot,individual,colour,iteration_to_plot):
+        
+        totInds=[0 for z in range(no_gens)]
+        for x in range(no_gens*no_iterations):
+            
+            if x>= iteration_to_plot*no_gens and x<=(iteration_to_plot*no_gens+99):
+                index=x%no_gens
+                for y in range(0,self.no_dims):
+                    totInds[index]+=inds[x][y]
+                    
+        label = "Dimensions:Ind {}".format(individual)
+        ax1.plot(gensToPlot, totInds, label = label,color=colour)
+    
+    def plot_obj_fitness_and_rewards_one_iteration(self,iteration):
+        rewards = np.array(self.rewards)
+        no_individuals = len(rewards[0])
+        no_gens = self.no_gens+1
+        no_iterations = int(len(rewards)/no_gens)
+        colourMap = self.getColourMap(no_individuals)
+        
+        #Rewards
+        fig, axes = plt.subplots(4, 5, constrained_layout=True)
+        currentAxRow=0
+        currentAxCol=0
+        axes[currentAxRow][currentAxCol].set_xlabel("Generation")
+        axes[currentAxRow][currentAxCol].set_ylabel(self.rewardLabel)
+        gensToPlot = [i for i in range(no_gens)]
+
+        
+        for i in range(no_individuals):
+            indsRewards=rewards[:,i]
+            self.plotIndividualRewards_one_iteration(indsRewards,no_gens,no_iterations,axes[currentAxRow][currentAxCol],gensToPlot,i,colourMap[i],iteration)
+
+            if i%self.no_plots_per_graph==self.no_plots_per_graph-1 and i!=no_individuals-1:
+                if currentAxCol == 4:
+                    currentAxCol = 0
+                    currentAxRow = 2
+                else:
+                    currentAxCol+=1
+                axes[currentAxRow][currentAxCol].set_xlabel("Generation")
+                axes[currentAxRow][currentAxCol].set_ylabel(self.rewardLabel)
+
+        #Dimensions
+        individuals = np.array(self.inds)
+        currentAxCol=0
+        currentAxRow=1
+
+        maxObjValue = self.maxScalarValue*self.no_dims
+        axes[currentAxRow][currentAxCol].set_xlabel("Generation")
+        axes[currentAxRow][currentAxCol].set_ylabel("Objective Fit.")
+        axes[currentAxRow][currentAxCol].set_ylim([0, maxObjValue])
+
+        for i in range(no_individuals):
+            indsDims=individuals[:,i]
+            
+            self.plotIndividualObjective_one_iteration(indsDims,no_gens,no_iterations,axes[currentAxRow][currentAxCol],gensToPlot,i,colourMap[i],iteration)
+            if i%self.no_plots_per_graph==self.no_plots_per_graph-1 and i!=no_individuals-1:
+                if currentAxCol == 4:
+                    currentAxCol = 0
+                    currentAxRow = 3
+                else:
+                    currentAxCol+=1           
+                axes[currentAxRow][currentAxCol].set_xlabel("Generation")
+                axes[currentAxRow][currentAxCol].set_ylabel("Objective Fit.")
+                axes[currentAxRow][currentAxCol].set_ylim([0, maxObjValue])
+
+        plt.show()
+
+    def plot_final_gens(self):
+        rewards = np.array(self.rewards)
+        no_individuals = len(rewards[0])
+        no_gens = self.no_gens+1
+        no_iterations = int(len(rewards)/no_gens)
+        colourMap = self.getColourMap(no_individuals)
+        
+        #Rewards
+        fig, axes = plt.subplots(4, 5, constrained_layout=True)
+        currentAxRow=0
+        currentAxCol=0
+        axes[currentAxRow][currentAxCol].set_xlabel("Iteration")
+        axes[currentAxRow][currentAxCol].set_ylabel(self.rewardLabel)
+        itersToPlot = [i for i in range(no_iterations)]
+        
+        for i in range(no_individuals):
+            indsRewards=rewards[:,i]
+            self.plot_rewards_final_gens(indsRewards,no_gens,no_iterations,axes[currentAxRow][currentAxCol],itersToPlot,indsRewards,colourMap[i])
+        
+            if i%self.no_plots_per_graph==self.no_plots_per_graph-1 and i!=no_individuals-1:
+                if currentAxCol == 4:
+                    currentAxCol = 0
+                    currentAxRow = 2
+                else:
+                    currentAxCol+=1
+                axes[currentAxRow][currentAxCol].set_xlabel("Iteration")
+                axes[currentAxRow][currentAxCol].set_ylabel(self.rewardLabel)
+
+        #Dimensions
+        individuals = np.array(self.inds)
+        currentAxCol=0
+        currentAxRow=1
+
+        maxObjValue = self.maxScalarValue*self.no_dims
+        axes[currentAxRow][currentAxCol].set_xlabel("Iteration")
+        axes[currentAxRow][currentAxCol].set_ylabel("Objective Fit.")
+        axes[currentAxRow][currentAxCol].set_ylim([0, maxObjValue])
+
+        for i in range(no_individuals):
+            indsDims=individuals[:,i]
+            
+            self.plot_objective_final_gens(indsDims,no_gens,no_iterations,axes[currentAxRow][currentAxCol],itersToPlot,i,colourMap[i])
+            if i%self.no_plots_per_graph==self.no_plots_per_graph-1 and i!=no_individuals-1:
+                if currentAxCol == 4:
+                    currentAxCol = 0
+                    currentAxRow = 3
+                else:
+                    currentAxCol+=1           
+                axes[currentAxRow][currentAxCol].set_xlabel("Iteration")
+                axes[currentAxRow][currentAxCol].set_ylabel("Objective Fit.")
+                axes[currentAxRow][currentAxCol].set_ylim([0, maxObjValue])
+
+        plt.show()
+                
+    def plot_rewards_final_gens(self,indsRewards,no_gens,no_iterations,ax1,itersToPlot,individual,colour):
+        totIndsRewards=[0 for z in range(no_iterations)]
+        index=0
+        for x in range(no_gens*no_iterations):
+            # if no_gens is 100, then if x%no_gens == 99 then it is the final generation of an iteration
+            if x%no_gens==(no_gens-1):
+                totIndsRewards[index]+=indsRewards[x]
+                index+=1
+            
+        label = "Rewards:Ind {}".format(individual)
+        ax1.plot(itersToPlot, totIndsRewards, label=label,color=colour)
+
+    def plot_objective_final_gens(self,inds,no_gens,no_iterations,ax1,itersToPlot,individual,colour):
+        totInds=[0 for z in range(no_iterations)]
+        index=0
+        for x in range(no_gens*no_iterations):
+            if x%no_gens==(no_gens-1):
+                for y in range(0,self.no_dims):
+                    totInds[index]+=inds[x][y]
+                index+=1
+                    
+        label = "Dimensions:Ind {}".format(individual)
+        ax1.plot(itersToPlot, totInds, label = label,color=colour)
+    
 
     def getColourMap(self, n):
         n=25 # only works for 25 indiviudals at the moment
