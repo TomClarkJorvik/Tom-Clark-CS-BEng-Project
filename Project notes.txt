@@ -1,7 +1,0 @@
--Visualisation next
--Design C: Original used 2 populations. Perhaps only 2 qtables are necessary?
--Design A is useless, remove it
--show plots after every 5 Q Network iterations?
--Should there even be a maximum value?
-
--Show plots for final iteration
