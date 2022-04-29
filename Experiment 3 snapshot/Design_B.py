@@ -1,7 +1,6 @@
 ##pip install gym
 ##pip install matplotlib
 
-import numbers
 import gym
 import random
 import numpy as np

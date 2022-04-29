@@ -1,5 +1,3 @@
-from socket import inet_aton
-from xml.dom import IndexSizeErr
 import matplotlib.pyplot as plt
 import numpy as np
 import random

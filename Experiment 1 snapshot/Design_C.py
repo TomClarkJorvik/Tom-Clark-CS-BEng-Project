@@ -1,7 +1,5 @@
-##pip install gym
 ##pip install matplotlib
 
-import gym
 import random
 import numpy as np
 import logBook_C

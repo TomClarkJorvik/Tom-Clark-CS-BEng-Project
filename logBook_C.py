@@ -1,6 +1,5 @@
 import matplotlib.pyplot as plt
 import numpy as np
-import random
 import logBook_B
 #This construct is simply for saving and loading log entries, and displaying graphs
 #Designed for Design C
@@ -63,7 +62,7 @@ class logbook(logBook_B.logbook):
                 popAverageScalars[1][i][y] = popAverageScalars[1][i][y]/(no_iterations/2)
         return(popAverageScalars)
 
-    def plotLogbook(self):
+    def plotLogbook(self,fileName):
         rewards = np.array(self.rewards)
         individuals = np.array(self.inds)
         no_individuals = len(rewards[0])
@@ -89,7 +88,7 @@ class logbook(logBook_B.logbook):
             axes[1].set_ylabel(self.scalarLabel)
             axes[1].plot(gensToPlot, popAverageScalars[i], color=colourMap[i*4])
 
-
+        plt.savefig(fileName)
         plt.show()
     def getColourMap(self):
         n=10

@@ -1,8 +1,6 @@
-from socket import inet_aton
-from xml.dom import IndexSizeErr
+from fileinput import filename
 import matplotlib.pyplot as plt
 import numpy as np
-import random
 import os
 #This construct is simply for saving and loading log entries, and displaying graphs
 class logbook:
@@ -15,6 +13,7 @@ class logbook:
         self.no_gens = 0
         self.no_plots_per_graph = 3
         self.directory = "./logs/"
+        self.plot_directory = "./plots/"
         self.rewardLabel = rewardLabel
         self.scalarLabel = scalarLabel
         self.maxScalarValue = maxScalarValue
@@ -172,7 +171,8 @@ class logbook:
         plt.show()
 
 
-    def plotLogbook(self):
+    def plotLogbook(self,fileName):
+        fileName = os.path.join(self.plot_directory, fileName)
         rewards = np.array(self.rewards)
         no_individuals = len(rewards[0])
         no_gens = self.no_gens+1
@@ -221,10 +221,11 @@ class logbook:
                 axes[currentAxRow][currentAxCol].set_xlabel("Generation")
                 axes[currentAxRow][currentAxCol].set_ylabel(self.scalarLabel)
                 axes[currentAxRow][currentAxCol].set_ylim([0, self.maxScalarValue])
-
+        plt.savefig(fileName)
         plt.show()
     
-    def plotLogbook_only2inds(self):
+    def plotLogbook_only2inds(self,fileName):
+        fileName = os.path.join(self.plot_directory, fileName)
         #only difference is that the colours are set to be different.
         rewards = np.array(self.rewards)
         no_individuals = len(rewards[0])
@@ -260,9 +261,10 @@ class logbook:
                 axes[currentAxRow].set_xlabel("Generation")
                 axes[currentAxRow].set_ylabel(self.scalarLabel)
                 axes[currentAxRow].set_ylim([0, self.maxScalarValue])
-
+        plt.savefig(fileName)
         plt.show()
-    def plotLogbook_2inds_one_iteration(self,iteration):
+    def plotLogbook_2inds_one_iteration(self,fileName,iteration):
+        fileName = os.path.join(self.plot_directory, fileName)
         
         rewards = np.array(self.rewards)
         no_individuals = len(rewards[0])
@@ -298,7 +300,7 @@ class logbook:
                 axes[currentAxRow].set_xlabel("Generation")
                 axes[currentAxRow].set_ylabel(self.scalarLabel)
                 axes[currentAxRow].set_ylim([0, self.maxScalarValue])
-
+        plt.savefig(fileName)
         plt.show()
     def plotIndividualRewards_one_iteration(self,indsRewards,no_gens,no_iterations,ax1,gensToPlot,individual,colour,iteration_to_plot):
         totIndsRewards=[0 for z in range(no_gens)]
@@ -322,7 +324,8 @@ class logbook:
         label = "Dimensions:Ind {}".format(individual)
         ax1.plot(gensToPlot, totInds, label = label,color=colour)
 
-    def plot_one_iteration(self,iteration):
+    def plot_one_iteration(self,fileName,iteration):
+        fileName = os.path.join(self.plot_directory, fileName)
         rewards = np.array(self.rewards)
         no_individuals = len(rewards[0])
         no_gens = self.no_gens+1
@@ -370,7 +373,7 @@ class logbook:
                 axes[currentAxRow][currentAxCol].set_xlabel("Generation")
                 axes[currentAxRow][currentAxCol].set_ylabel(self.scalarLabel)
                 axes[currentAxRow][currentAxCol].set_ylim([0, self.maxScalarValue])
-
+        plt.savefig(fileName)
         plt.show()
 
     def plotIndividualObjFitness(self,inds,no_gens,no_iterations,ax1,gensToPlot,individual,colour):
@@ -387,7 +390,8 @@ class logbook:
         label = "Dimensions:Ind {}".format(individual)
         ax1.plot(gensToPlot, totInds, label = label,color=colour)
 
-    def plot_obj_fitness_and_rewards(self):
+    def plot_obj_fitness_and_rewards(self,fileName):
+        fileName = os.path.join(self.plot_directory, fileName)
         rewards = np.array(self.rewards)
         no_individuals = len(rewards[0])
         no_gens = self.no_gens+1
@@ -439,7 +443,7 @@ class logbook:
                 axes[currentAxRow][currentAxCol].set_xlabel("Generation")
                 axes[currentAxRow][currentAxCol].set_ylabel("Objective Fit.")
                 axes[currentAxRow][currentAxCol].set_ylim([0, maxObjValue])
-
+        plt.savefig(fileName)
         plt.show()
     
     def plotIndividualObjective_one_iteration(self,inds,no_gens,no_iterations,ax1,gensToPlot,individual,colour,iteration_to_plot):
@@ -455,7 +459,8 @@ class logbook:
         label = "Dimensions:Ind {}".format(individual)
         ax1.plot(gensToPlot, totInds, label = label,color=colour)
     
-    def plot_obj_fitness_and_rewards_one_iteration(self,iteration):
+    def plot_obj_fitness_and_rewards_one_iteration(self,fileName,iteration):
+        fileName = os.path.join(self.plot_directory, fileName)
         rewards = np.array(self.rewards)
         no_individuals = len(rewards[0])
         no_gens = self.no_gens+1
@@ -507,10 +512,10 @@ class logbook:
                 axes[currentAxRow][currentAxCol].set_xlabel("Generation")
                 axes[currentAxRow][currentAxCol].set_ylabel("Objective Fit.")
                 axes[currentAxRow][currentAxCol].set_ylim([0, maxObjValue])
-
+        plt.savefig(fileName)
         plt.show()
 
-    def plot_final_gens(self):
+    def plot_final_gens(self,fileName):
         rewards = np.array(self.rewards)
         no_individuals = len(rewards[0])
         no_gens = self.no_gens+1
@@ -561,7 +566,7 @@ class logbook:
                 axes[currentAxRow][currentAxCol].set_xlabel("Iteration")
                 axes[currentAxRow][currentAxCol].set_ylabel("Objective Fit.")
                 axes[currentAxRow][currentAxCol].set_ylim([0, maxObjValue])
-
+        plt.savefig(fileName)
         plt.show()
                 
     def plot_rewards_final_gens(self,indsRewards,no_gens,no_iterations,ax1,itersToPlot,individual,colour):
@@ -610,4 +615,6 @@ class logbook:
         for i in range(10):
             colourArray.append(cmap(i))
         return(colourArray)
+    
+
 

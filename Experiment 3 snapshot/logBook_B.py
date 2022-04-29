@@ -1,8 +1,5 @@
-from socket import inet_aton
-from xml.dom import IndexSizeErr
 import matplotlib.pyplot as plt
 import numpy as np
-import random
 import os
 #This construct is simply for saving and loading log entries, and displaying graphs
 class logbook:

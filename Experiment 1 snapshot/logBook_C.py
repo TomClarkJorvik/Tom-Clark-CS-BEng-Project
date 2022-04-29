@@ -1,6 +1,5 @@
 import matplotlib.pyplot as plt
 import numpy as np
-import random
 import logBook_B
 #This construct is simply for saving and loading log entries, and displaying graphs
 #Designed for Design C
