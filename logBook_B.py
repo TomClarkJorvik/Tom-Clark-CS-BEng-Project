@@ -195,17 +195,17 @@ class logbook:
                 if currentAxCol == 4:
                     currentAxCol = 0
                     currentAxRow = 2
+                    axes[currentAxRow][currentAxCol].set_ylabel(self.rewardLabel)
                 else:
                     currentAxCol+=1
-                axes[currentAxRow][currentAxCol].set_xlabel("Generation")
-                axes[currentAxRow][currentAxCol].set_ylabel(self.rewardLabel)
+                if currentAxRow==0:
+                    axes[currentAxRow][currentAxCol].set_xlabel("Generation")
 
         #Dimensions
         individuals = np.array(self.inds)
         currentAxCol=0
         currentAxRow=1
 
-        axes[currentAxRow][currentAxCol].set_xlabel("Generation")
         axes[currentAxRow][currentAxCol].set_ylabel(self.scalarLabel)
         axes[currentAxRow][currentAxCol].set_ylim([0, self.maxScalarValue])
 
@@ -216,10 +216,9 @@ class logbook:
                 if currentAxCol == 4:
                     currentAxCol = 0
                     currentAxRow = 3
+                    axes[currentAxRow][currentAxCol].set_ylabel(self.scalarLabel)
                 else:
                     currentAxCol+=1           
-                axes[currentAxRow][currentAxCol].set_xlabel("Generation")
-                axes[currentAxRow][currentAxCol].set_ylabel(self.scalarLabel)
                 axes[currentAxRow][currentAxCol].set_ylim([0, self.maxScalarValue])
         plt.savefig(fileName)
         plt.show()
@@ -347,17 +346,17 @@ class logbook:
                 if currentAxCol == 4:
                     currentAxCol = 0
                     currentAxRow = 2
+                    axes[currentAxRow][currentAxCol].set_ylabel(self.rewardLabel)
                 else:
                     currentAxCol+=1
-                axes[currentAxRow][currentAxCol].set_xlabel("Generation")
-                axes[currentAxRow][currentAxCol].set_ylabel(self.rewardLabel)
+                if currentAxRow==0:
+                    axes[currentAxRow][currentAxCol].set_xlabel("Generation")
 
         #Dimensions
         individuals = np.array(self.inds)
         currentAxCol=0
         currentAxRow=1
 
-        axes[currentAxRow][currentAxCol].set_xlabel("Generation")
         axes[currentAxRow][currentAxCol].set_ylabel(self.scalarLabel)
         axes[currentAxRow][currentAxCol].set_ylim([0, self.maxScalarValue])
 
@@ -368,10 +367,9 @@ class logbook:
                 if currentAxCol == 4:
                     currentAxCol = 0
                     currentAxRow = 3
+                    axes[currentAxRow][currentAxCol].set_ylabel(self.scalarLabel)
                 else:
                     currentAxCol+=1           
-                axes[currentAxRow][currentAxCol].set_xlabel("Generation")
-                axes[currentAxRow][currentAxCol].set_ylabel(self.scalarLabel)
                 axes[currentAxRow][currentAxCol].set_ylim([0, self.maxScalarValue])
         plt.savefig(fileName)
         plt.show()
@@ -415,10 +413,11 @@ class logbook:
                 if currentAxCol == 4:
                     currentAxCol = 0
                     currentAxRow = 2
+                    axes[currentAxRow][currentAxCol].set_ylabel(self.rewardLabel)
                 else:
                     currentAxCol+=1
-                axes[currentAxRow][currentAxCol].set_xlabel("Generation")
-                axes[currentAxRow][currentAxCol].set_ylabel(self.rewardLabel)
+                if currentAxRow==0:
+                    axes[currentAxRow][currentAxCol].set_xlabel("Generation")
 
         #Dimensions
         individuals = np.array(self.inds)
@@ -426,7 +425,6 @@ class logbook:
         currentAxRow=1
 
         maxObjValue = self.maxScalarValue*self.no_dims
-        axes[currentAxRow][currentAxCol].set_xlabel("Generation")
         axes[currentAxRow][currentAxCol].set_ylabel("Objective Fit.")
         axes[currentAxRow][currentAxCol].set_ylim([0, maxObjValue])
 
@@ -438,10 +436,9 @@ class logbook:
                 if currentAxCol == 4:
                     currentAxCol = 0
                     currentAxRow = 3
+                    axes[currentAxRow][currentAxCol].set_ylabel("Objective Fit.")
                 else:
                     currentAxCol+=1           
-                axes[currentAxRow][currentAxCol].set_xlabel("Generation")
-                axes[currentAxRow][currentAxCol].set_ylabel("Objective Fit.")
                 axes[currentAxRow][currentAxCol].set_ylim([0, maxObjValue])
         plt.savefig(fileName)
         plt.show()
@@ -484,10 +481,11 @@ class logbook:
                 if currentAxCol == 4:
                     currentAxCol = 0
                     currentAxRow = 2
+                    axes[currentAxRow][currentAxCol].set_ylabel(self.rewardLabel)
                 else:
                     currentAxCol+=1
-                axes[currentAxRow][currentAxCol].set_xlabel("Generation")
-                axes[currentAxRow][currentAxCol].set_ylabel(self.rewardLabel)
+                if currentAxRow==0:
+                    axes[currentAxRow][currentAxCol].set_xlabel("Generation")
 
         #Dimensions
         individuals = np.array(self.inds)
@@ -495,7 +493,6 @@ class logbook:
         currentAxRow=1
 
         maxObjValue = self.maxScalarValue*self.no_dims
-        axes[currentAxRow][currentAxCol].set_xlabel("Generation")
         axes[currentAxRow][currentAxCol].set_ylabel("Objective Fit.")
         axes[currentAxRow][currentAxCol].set_ylim([0, maxObjValue])
 
@@ -507,10 +504,9 @@ class logbook:
                 if currentAxCol == 4:
                     currentAxCol = 0
                     currentAxRow = 3
+                    axes[currentAxRow][currentAxCol].set_ylabel("Objective Fit.")
                 else:
                     currentAxCol+=1           
-                axes[currentAxRow][currentAxCol].set_xlabel("Generation")
-                axes[currentAxRow][currentAxCol].set_ylabel("Objective Fit.")
                 axes[currentAxRow][currentAxCol].set_ylim([0, maxObjValue])
         plt.savefig(fileName)
         plt.show()
@@ -538,10 +534,11 @@ class logbook:
                 if currentAxCol == 4:
                     currentAxCol = 0
                     currentAxRow = 2
+                    axes[currentAxRow][currentAxCol].set_ylabel(self.rewardLabel)
                 else:
                     currentAxCol+=1
-                axes[currentAxRow][currentAxCol].set_xlabel("Iteration")
-                axes[currentAxRow][currentAxCol].set_ylabel(self.rewardLabel)
+                if currentAxRow==0:
+                    axes[currentAxRow][currentAxCol].set_xlabel("Iteration")
 
         #Dimensions
         individuals = np.array(self.inds)
@@ -549,7 +546,6 @@ class logbook:
         currentAxRow=1
 
         maxObjValue = self.maxScalarValue*self.no_dims
-        axes[currentAxRow][currentAxCol].set_xlabel("Iteration")
         axes[currentAxRow][currentAxCol].set_ylabel("Objective Fit.")
         axes[currentAxRow][currentAxCol].set_ylim([0, maxObjValue])
 
@@ -561,10 +557,9 @@ class logbook:
                 if currentAxCol == 4:
                     currentAxCol = 0
                     currentAxRow = 3
+                    axes[currentAxRow][currentAxCol].set_ylabel("Objective Fit.")
                 else:
                     currentAxCol+=1           
-                axes[currentAxRow][currentAxCol].set_xlabel("Iteration")
-                axes[currentAxRow][currentAxCol].set_ylabel("Objective Fit.")
                 axes[currentAxRow][currentAxCol].set_ylim([0, maxObjValue])
         plt.savefig(fileName)
         plt.show()

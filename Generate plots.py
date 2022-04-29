@@ -8,9 +8,11 @@ l1 = logBook_B.logbook(equation)
 l1.loadLogbook("logB1.txt")
 l1.plotLogbook("fig1.svg")
 l1.plot_one_iteration("fig2.svg",49)
+
 l2 = logBook_C.logbook(equation,25)
 l2.loadLogbook("logC1.txt")
 l2.plotLogbook("fig3.svg")
+
 l3 = logBook_B.logbook(equation)
 l3.loadLogbook("logB1_2inds.txt")
 l3.plotLogbook_only2inds("fig4.svg")

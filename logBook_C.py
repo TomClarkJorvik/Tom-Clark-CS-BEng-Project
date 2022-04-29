@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import logBook_B
+import os
 #This construct is simply for saving and loading log entries, and displaying graphs
 #Designed for Design C
 class logbook(logBook_B.logbook):
@@ -13,6 +14,7 @@ class logbook(logBook_B.logbook):
         self.no_gens = 0
         self.popCutoff = popCutoff
         self.directory = "./logs/"
+        self.plot_directory = "./plots/"
         self.rewardLabel = "Subjective Fit."
         self.scalarLabel = "Objective Fit."
 
@@ -63,6 +65,7 @@ class logbook(logBook_B.logbook):
         return(popAverageScalars)
 
     def plotLogbook(self,fileName):
+        fileName = os.path.join(self.plot_directory, fileName)
         rewards = np.array(self.rewards)
         individuals = np.array(self.inds)
         no_individuals = len(rewards[0])
