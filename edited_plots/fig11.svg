@@ -31,12 +31,12 @@
      inkscape:document-units="pt"
      showgrid="false"
      inkscape:zoom="1.6970486"
-     inkscape:cx="307.29821"
-     inkscape:cy="294.0399"
+     inkscape:cx="207.1243"
+     inkscape:cy="389.79438"
      inkscape:window-width="1920"
-     inkscape:window-height="986"
-     inkscape:window-x="-11"
-     inkscape:window-y="-11"
+     inkscape:window-height="1001"
+     inkscape:window-x="-9"
+     inkscape:window-y="-9"
      inkscape:window-maximized="1"
      inkscape:current-layer="layer1" />
   <metadata
@@ -66,12 +66,45 @@
      id="layer1"
      inkscape:label="Layer 1">
     <rect
-       style="fill:#ffffff;stroke-width:0.75"
+       style="fill:#ffffff;stroke-width:0.76429"
        id="rect1374"
        width="502.93198"
-       height="388.46857"
+       height="403.41278"
        x="-6.6291561"
-       y="-14.584143" />
+       y="-28.827999" />
+    <text
+       xml:space="preserve"
+       style="font-size:12px;line-height:1.25;font-family:sans-serif;stroke-width:0.75"
+       x="84.411263"
+       y="-17.67775"
+       id="text2698"><tspan
+         sodipodi:role="line"
+         id="tspan2696"
+         style="stroke-width:0.75"
+         x="84.411263"
+         y="-17.67775">Individual 1</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:12px;line-height:1.25;font-family:sans-serif;stroke-width:0.75;stroke-linecap:butt;stroke-linejoin:round"
+       x="363.25729"
+       y="358.90665"
+       id="text2698-3"><tspan
+         sodipodi:role="line"
+         id="tspan2696-7"
+         style="stroke-width:0.75"
+         x="363.25729"
+         y="358.90665">Individual 2</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:12px;line-height:1.25;font-family:sans-serif;stroke-width:0.75"
+       x="270.46957"
+       y="361.06802"
+       id="text6743"><tspan
+         sodipodi:role="line"
+         id="tspan6741"
+         style="stroke-width:0.75"
+         x="270.46957"
+         y="361.06802">Individual 3</tspan></text>
   </g>
   <g
      id="figure_1">
@@ -5081,4 +5114,37 @@
      style="fill:none;stroke:#000000;stroke-width:0.75px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
      d="M 460.94732,176.33555 H -20.329412 Z"
      id="path2165" />
+  <g
+     inkscape:groupmode="layer"
+     id="layer2"
+     inkscape:label="Layer 2">
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.75px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="M 376.09412,347.80972 362.95149,323.67538 Z"
+       id="path7243" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.75px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="M 376.09412,347.80972 362.61567,231.71375 Z"
+       id="path7245" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.75px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="M 95.45985,-15.026087 151.56319,156.17258 Z"
+       id="path7360" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.75px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="M 95.45985,-15.026087 141.82092,108.90254 95.45985,-15.026087"
+       id="path7363" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.75px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 95.45985,-15.026087 49.04763,71.630211 z"
+       id="path7365" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.75px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 291.4619,347.80972 -19.17836,-34.2425 z"
+       id="path7480" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.75px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="M 291.4619,347.80972 272.78726,202.1364 Z"
+       id="path7482" />
+  </g>
 </svg>

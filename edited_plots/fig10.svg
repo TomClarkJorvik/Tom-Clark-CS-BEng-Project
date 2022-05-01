@@ -30,13 +30,13 @@
      inkscape:pagecheckerboard="0"
      inkscape:document-units="pt"
      showgrid="false"
-     inkscape:zoom="1.6970486"
-     inkscape:cx="307.29821"
-     inkscape:cy="290.50435"
+     inkscape:zoom="0.8485243"
+     inkscape:cx="341.18056"
+     inkscape:cy="303.46803"
      inkscape:window-width="1920"
-     inkscape:window-height="986"
-     inkscape:window-x="-11"
-     inkscape:window-y="-11"
+     inkscape:window-height="1001"
+     inkscape:window-x="-9"
+     inkscape:window-y="-9"
      inkscape:window-maximized="1"
      inkscape:current-layer="layer1" />
   <metadata
@@ -66,12 +66,39 @@
      id="layer1"
      inkscape:label="Layer 1">
     <rect
-       style="fill:#ffffff;stroke-width:0.75"
+       style="fill:#ffffff;stroke-width:0.769847"
        id="rect1342"
        width="490.1156"
-       height="369.46497"
+       height="389.27802"
        x="-6.6291561"
-       y="-7.5130434" />
+       y="-17.60334" />
+    <text
+       xml:space="preserve"
+       style="font-size:14px;line-height:1.25;font-family:sans-serif;stroke-width:0.75"
+       x="359.74219"
+       y="364.60361"
+       id="text4910"><tspan
+         sodipodi:role="line"
+         id="tspan4908"
+         style="font-size:14px;stroke-width:0.75"
+         x="359.74219"
+         y="364.60361">Individual 2</tspan><tspan
+         sodipodi:role="line"
+         style="font-size:14px;stroke-width:0.75"
+         x="359.74219"
+         y="382.10361"
+         id="tspan4461" /></text>
+    <text
+       xml:space="preserve"
+       style="font-size:14px;line-height:1.25;font-family:sans-serif;stroke-width:0.75;stroke-linecap:butt;stroke-linejoin:round"
+       x="351.17407"
+       y="-3.1845274"
+       id="text4910-1"><tspan
+         sodipodi:role="line"
+         id="tspan4908-1"
+         style="font-size:14px;stroke-width:0.75"
+         x="351.17407"
+         y="-3.1845274">Individual 1</tspan></text>
   </g>
   <g
      id="figure_1">
@@ -4953,4 +4980,25 @@
      style="fill:none;stroke:#000000;stroke-width:0.75px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
      d="M 0.44194374,175.45166 H 461.38927 Z"
      id="path2127" />
+  <g
+     inkscape:groupmode="layer"
+     id="layer2"
+     inkscape:label="Layer 2">
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.75px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="M 378.74578,349.5775 350.08799,187.95547 Z"
+       id="path8686" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.75px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="M 378.74578,349.5775 350.9709,308.51314 378.74578,349.5775"
+       id="path10206" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.75px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="M 369.90691,-1.3258312 427.96172,129.96121 Z"
+       id="path7023" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.75px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 369.90691,-1.3258312 66.001,9.7148212 z"
+       id="path7026" />
+  </g>
 </svg>

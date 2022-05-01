@@ -9,7 +9,7 @@
    id="svg2051"
    sodipodi:docname="fig2.svg"
    inkscape:version="1.1.2 (b8e25be833, 2022-02-05)"
-   inkscape:export-filename="C:\Users\TC\Documents\University Stuff\Year3\Tom-Clark-CS-BEng-Project\edited plots\fig2.png"
+   inkscape:export-filename="C:\Actual_Work\Year3_Comp_Sci\Project\Tom-Clark-CS-BEng-Project\edited_plots\fig2.png"
    inkscape:export-xdpi="96"
    inkscape:export-ydpi="96"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
@@ -30,13 +30,13 @@
      inkscape:pagecheckerboard="0"
      inkscape:document-units="pt"
      showgrid="false"
-     inkscape:zoom="1.6970486"
-     inkscape:cx="307.29821"
-     inkscape:cy="549.18875"
+     inkscape:zoom="1.1999946"
+     inkscape:cx="273.75123"
+     inkscape:cy="196.25088"
      inkscape:window-width="1920"
-     inkscape:window-height="986"
-     inkscape:window-x="-11"
-     inkscape:window-y="-11"
+     inkscape:window-height="1001"
+     inkscape:window-x="-9"
+     inkscape:window-y="-9"
      inkscape:window-maximized="1"
      inkscape:current-layer="layer1" />
   <metadata
@@ -64,14 +64,48 @@
   <g
      inkscape:groupmode="layer"
      id="layer1"
-     inkscape:label="Layer 1">
+     inkscape:label="Layer 1"
+     style="display:inline">
     <rect
-       style="fill:#ffffff;stroke-width:0.799352"
+       style="fill:#ffffff;stroke-width:0.913292"
        id="rect1321"
-       width="515.30646"
-       height="360.18417"
-       x="-22.981073"
-       y="-6.6291561" />
+       width="531.55652"
+       height="455.8096"
+       x="-36.731136"
+       y="-60.379402" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:14px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.75"
+       x="163.12573"
+       y="-26.250118"
+       id="text2909"><tspan
+         sodipodi:role="line"
+         id="tspan2907"
+         style="font-size:14px;stroke-width:0.75"
+         x="163.12573"
+         y="-26.250118">Individual 1</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:14px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.75;stroke-linecap:butt;stroke-linejoin:round"
+       x="276.22946"
+       y="358.33902"
+       id="text2909-4"><tspan
+         sodipodi:role="line"
+         id="tspan2907-5"
+         style="font-size:14px;stroke-width:0.75"
+         x="276.22946"
+         y="358.33902">Individual 3</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:14px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.75;stroke-linecap:butt;stroke-linejoin:round"
+       x="281.85449"
+       y="-12.91268"
+       id="text2909-1"><tspan
+         sodipodi:role="line"
+         id="tspan2907-1"
+         style="font-size:14px;stroke-width:0.75"
+         x="281.85449"
+         y="-12.91268">Individual 2</tspan></text>
   </g>
   <g
      id="figure_1">
@@ -4871,4 +4905,21 @@
      style="fill:none;stroke:#000000;stroke-width:0.75px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
      d="M 0.44194374,175.00972 H 460.94732 Z"
      id="path2088" />
+  <g
+     inkscape:groupmode="layer"
+     id="layer2"
+     inkscape:label="Layer 2">
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.957075px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="M 297.36659,-8.6866618 249.62584,56.540747 Z"
+       id="path16710" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.856413px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="M 207.50094,-20.625093 169.61905,52.164879 Z"
+       id="path16712" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.75px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="M 291.25132,340.00153 249.84488,238.75108 Z"
+       id="path16987" />
+  </g>
 </svg>
